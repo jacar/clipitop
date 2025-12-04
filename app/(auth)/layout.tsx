@@ -1,4 +1,5 @@
-import type React from "react"
+import Image from "next/image"
+
 export default function AuthLayout({
   children,
 }: {
@@ -7,7 +8,7 @@ export default function AuthLayout({
   return (
     <div className="flex min-h-screen">
       <div className="hidden w-1/2 bg-primary lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <img src="/logoclic.svg" alt="clipi.top logo" width="190" height="40" />
+        <Image src="/logoclic.svg" alt="clipi.top logo" width={190} height={40} priority />
 
         <div>
           <blockquote className="text-lg text-primary-foreground/90">

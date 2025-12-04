@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Instagram, Twitter, Youtube, Linkedin } from "lucide-react"
 
 export function Footer() {
@@ -7,7 +8,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 md:grid-cols-4">
           <div className="md:col-span-1">
-            <img src="/logoclic.svg" alt="clipi.top logo" width="190" height="40" />
+            <Image src="/logoclic.svg" alt="clipi.top logo" width={190} height={40} />
             <p className="mt-4 text-sm text-muted-foreground">
               La plataforma más fácil para crear biolinks profesionales y landing pages.
             </p>

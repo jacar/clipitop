@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import {
   Instagram,
   Twitter,
@@ -159,10 +160,12 @@ export function PublicBiolink({ username }: { username: string }) {
             style={{ borderColor: biolink.buttonColor }}
           >
             {biolink.avatar ? (
-              <img
+              <Image
                 src={biolink.avatar || "/placeholder.svg"}
                 alt={biolink.displayName}
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
+                unoptimized
               />
             ) : (
               <div
@@ -243,7 +246,7 @@ export function PublicBiolink({ username }: { username: string }) {
               className="flex h-4 w-4 items-center justify-center rounded"
               style={{ backgroundColor: biolink.buttonColor }}
             >
-              <img src="/logoclic.svg" alt="clipi.top logo" className="h-4 w-4" />
+              <Image src="/logoclic.svg" alt="clipi.top logo" width={16} height={16} />
             </div>
             Creado con clipi.top
           </Link>

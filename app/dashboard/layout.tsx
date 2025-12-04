@@ -24,6 +24,8 @@ const navItems = [
 
 import { useAuth } from "@/components/auth-provider"
 
+import Image from "next/image"
+
 export default function DashboardLayout({
   children,
 }: {
@@ -50,7 +52,7 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-muted/30">
       {/* Mobile header */}
       <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-border bg-background px-4 lg:hidden">
-        <img src="/logoclic.svg" alt="clipi.top logo" width="190" height="40" />
+        <Image src="/logoclic.svg" alt="clipi.top logo" width={190} height={40} priority />
         <button onClick={() => setSidebarOpen(!sidebarOpen)}>
           {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
@@ -63,7 +65,7 @@ export default function DashboardLayout({
             }`}
         >
           <div className="flex h-full flex-col">
-            <img src="/clipi.svg" alt="clipi.top logo" width="190" height="40" />
+            <Image src="/clipi.svg" alt="clipi.top logo" width={190} height={40} priority className="m-4" />
 
             <nav className="flex-1 space-y-1 p-4">
               {navItems.map((item) => {

@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { useState } from "react"
@@ -13,7 +14,7 @@ export function Header() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/clipi.svg" alt="clipi.top logo" width="190" height="40" />
+            <Image src="/clipi.svg" alt="clipi.top logo" width={190} height={40} priority />
           </Link>
         </div>
 

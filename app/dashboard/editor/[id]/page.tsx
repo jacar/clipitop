@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, use } from "react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -250,7 +251,7 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
                     />
                     {biolink.backgroundImageUrl && !PREDEFINED_BACKGROUNDS.some(bg => bg.backgroundImageUrl === biolink.backgroundImageUrl || bg.backgroundColor === biolink.backgroundColor) && (
                       <div className="relative w-full h-32 rounded-md overflow-hidden">
-                        <img src={biolink.backgroundImageUrl} alt="Fondo personalizado" className="w-full h-full object-cover" />
+                        <Image src={biolink.backgroundImageUrl} alt="Fondo personalizado" fill className="object-cover" unoptimized />
                         <Button
                           variant="destructive"
                           size="icon"
