@@ -5,16 +5,25 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Edit, ExternalLink } from "lucide-react"
-import { getBiolinks, type BiolinkProfile } from "@/lib/biolink-store"
+import { BiolinkService } from "@/lib/biolink-service"
+import { type BiolinkProfile } from "@/lib/types"
+import { useAuth } from "@/components/auth-provider"
 
 export default function LinksPage() {
+  const { user } = useAuth()
   const [mounted, setMounted] = useState(false)
   const [biolinks, setBiolinks] = useState<BiolinkProfile[]>([])
 
   useEffect(() => {
     setMounted(true)
-    setBiolinks(getBiolinks())
-  }, [])
+    if (user) {
+      const fetchBiolinks = async () => {
+        const data = await BiolinkService.getBiolinks(user.id)
+        setBiolinks(data)
+      }
+      fetchBiolinks()
+    }
+  }, [user])
 
   if (!mounted) {
     return (
@@ -88,18 +97,16 @@ export default function LinksPage() {
                     {biolink.links.map((link) => (
                       <div
                         key={link.id}
-                        className={`flex items-center justify-between rounded-lg border p-3 ${
-                          link.enabled ? "border-border" : "border-border/50 opacity-50"
-                        }`}
+                        className={`flex items-center justify-between rounded-lg border p-3 ${link.enabled ? "border-border" : "border-border/50 opacity-50"
+                          }`}
                       >
                         <div className="overflow-hidden">
                           <p className="truncate font-medium">{link.title}</p>
                           <p className="truncate text-xs text-muted-foreground">{link.url}</p>
                         </div>
                         <span
-                          className={`rounded-full px-2 py-1 text-xs ${
-                            link.enabled ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
-                          }`}
+                          className={`rounded-full px-2 py-1 text-xs ${link.enabled ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                            }`}
                         >
                           {link.enabled ? "Activo" : "Inactivo"}
                         </span>

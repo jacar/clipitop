@@ -23,7 +23,8 @@ import {
 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { BiolinkQRCode } from "@/components/biolink-qr-code"
-import { getBiolinkByUsername, type BiolinkProfile } from "@/lib/biolink-store"
+import { BiolinkService } from "@/lib/biolink-service"
+import { type BiolinkProfile } from "@/lib/types"
 import { TEMPLATES } from "@/lib/templates"
 
 const SOCIAL_ICONS: Record<string, React.ElementType> = {
@@ -48,24 +49,27 @@ export function PublicBiolink({ username }: { username: string }) {
 
   useEffect(() => {
     setMounted(true)
-    const data = getBiolinkByUsername(username)
-    if (data) {
-      setBiolink(data)
-    } else {
-      // Check if it's a demo template
-      const template = TEMPLATES.find((t) => t.id === username)
-      if (template) {
-        setShowDemo(true)
-        setBiolink({
-          id: template.id,
-          username: template.id,
-          ...template.profile,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        } as BiolinkProfile)
+    const fetchBiolink = async () => {
+      const data = await BiolinkService.getBiolinkByUsername(username)
+      if (data) {
+        setBiolink(data)
+      } else {
+        // Check if it's a demo template
+        const template = TEMPLATES.find((t) => t.id === username)
+        if (template) {
+          setShowDemo(true)
+          setBiolink({
+            id: template.id,
+            username: template.id,
+            ...template.profile,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          } as BiolinkProfile)
+        }
       }
+      setLoading(false)
     }
-    setLoading(false)
+    fetchBiolink()
   }, [username])
 
   if (!mounted || loading) {

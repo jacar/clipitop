@@ -41,29 +41,76 @@ const categories: CategoryOption[] = [
     },
 ]
 
+import { useAuth } from "@/components/auth-provider"
+import { BiolinkService } from "@/lib/biolink-service"
+import { getTemplateById } from "@/lib/templates"
+import { supabase } from "@/lib/supabase"
+
 export function OnboardingForm() {
     const router = useRouter()
+    const { user } = useAuth()
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
     const [isLoading, setIsLoading] = useState(false)
 
     const handleContinue = async () => {
-        if (!selectedCategory) return
+        if (!selectedCategory || !user) return
 
         setIsLoading(true)
 
-        // Update user with selected category
-        const storedUser = localStorage.getItem("user")
-        if (storedUser) {
-            const user = JSON.parse(storedUser)
-            user.category = selectedCategory
-            localStorage.setItem("user", JSON.stringify(user))
+        try {
+            // 1. Update user metadata with category
+            await supabase.auth.updateUser({
+                data: { category: selectedCategory }
+            })
+
+            // 2. Create Biolink Profile
+            const username = user.user_metadata?.username || `user${Date.now()}`
+            const newBiolink = await BiolinkService.createBiolink(user.id, username)
+
+            if (newBiolink) {
+                // 3. Apply template if exists
+                const templateId = user.user_metadata?.template_id
+                if (templateId) {
+                    const template = getTemplateById(templateId)
+                    if (template) {
+                        await BiolinkService.updateBiolink(newBiolink.id, {
+                            displayName: user.user_metadata?.full_name || template.profile.displayName,
+                            bio: template.profile.bio,
+                            theme: template.profile.theme,
+                            backgroundColor: template.profile.backgroundColor,
+                            buttonStyle: template.profile.buttonStyle,
+                            buttonColor: template.profile.buttonColor,
+                            textColor: template.profile.textColor,
+                            // Links and social links need separate handling if we want to copy them
+                            // For now, let's just copy profile styles
+                        })
+
+                        // Copy links if needed
+                        if (template.profile.links) {
+                            for (const link of template.profile.links) {
+                                await BiolinkService.addLink(newBiolink.id, {
+                                    title: link.title,
+                                    url: link.url,
+                                    icon: link.icon,
+                                    enabled: link.enabled
+                                })
+                            }
+                        }
+                    }
+                } else {
+                    // Update display name if no template
+                    await BiolinkService.updateBiolink(newBiolink.id, {
+                        displayName: user.user_metadata?.full_name || "Mi Biolink"
+                    })
+                }
+            }
+
+            router.push("/dashboard")
+        } catch (error) {
+            console.error("Error in onboarding:", error)
+        } finally {
+            setIsLoading(false)
         }
-
-        // Simulate processing
-        await new Promise((resolve) => setTimeout(resolve, 800))
-
-        setIsLoading(false)
-        router.push("/dashboard")
     }
 
     return (
@@ -88,8 +135,8 @@ export function OnboardingForm() {
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
                         className={`relative group rounded-2xl border-2 p-6 text-left transition-all hover:scale-105 ${selectedCategory === category.id
-                                ? "border-primary bg-primary/5 shadow-lg"
-                                : "border-border bg-card hover:border-primary/50"
+                            ? "border-primary bg-primary/5 shadow-lg"
+                            : "border-border bg-card hover:border-primary/50"
                             }`}
                     >
                         {selectedCategory === category.id && (

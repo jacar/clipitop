@@ -1,6 +1,6 @@
 import type React from "react"
 import { Instagram, Twitter, Youtube, Facebook, Linkedin, Music, Globe } from "lucide-react"
-import type { BiolinkProfile } from "@/lib/biolink-store"
+import type { BiolinkProfile } from "@/lib/types"
 
 const SOCIAL_ICONS: Record<string, React.ElementType> = {
   instagram: Instagram,

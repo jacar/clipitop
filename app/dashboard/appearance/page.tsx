@@ -4,7 +4,9 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getBiolinks, type BiolinkProfile } from "@/lib/biolink-store"
+import { BiolinkService } from "@/lib/biolink-service"
+import { type BiolinkProfile } from "@/lib/types"
+import { useAuth } from "@/components/auth-provider"
 
 const THEMES = [
   { id: "minimal", name: "Minimal", bg: "#ffffff", btn: "#000000" },
@@ -16,13 +18,20 @@ const THEMES = [
 ]
 
 export default function AppearancePage() {
+  const { user } = useAuth()
   const [mounted, setMounted] = useState(false)
   const [biolinks, setBiolinks] = useState<BiolinkProfile[]>([])
 
   useEffect(() => {
     setMounted(true)
-    setBiolinks(getBiolinks())
-  }, [])
+    if (user) {
+      const fetchBiolinks = async () => {
+        const data = await BiolinkService.getBiolinks(user.id)
+        setBiolinks(data)
+      }
+      fetchBiolinks()
+    }
+  }, [user])
 
   if (!mounted) {
     return (

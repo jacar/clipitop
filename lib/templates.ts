@@ -1,4 +1,4 @@
-import type { BiolinkProfile } from "./biolink-store"
+import type { BiolinkProfile } from "./types"
 
 export interface Template {
   id: string

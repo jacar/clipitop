@@ -151,6 +151,12 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Fix Next.js Image aspect ratio warnings */
+  img[src*="clipi.svg"],
+  img[src*="logoclic.svg"] {
+    height: auto !important;
+  }
 }
 
 /* Blob animations */

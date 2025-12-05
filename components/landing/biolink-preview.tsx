@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Instagram, Twitter, Youtube, Music, Check } from "lucide-react"
 import { TEMPLATES, PREDEFINED_BACKGROUNDS } from "@/lib/templates"
-import { User, LOCAL_USERS } from "@/lib/local-users"
+// Import de usuarios locales eliminado
 
 // Utility function to generate a random hex color
 const getRandomHexColor = () => {
@@ -50,9 +50,9 @@ export function BiolinkPreview() {
     // Only run initial generation once when mounted
     // We don't want to re-run this effect when featuredTemplates changes because it's now stable
     // But we do want to run it when activeIndex changes by user interaction or interval
-    generateRandomDesign(featuredTemplates, activeIndex) 
+    generateRandomDesign(featuredTemplates, activeIndex)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeIndex]) 
+  }, [activeIndex])
 
   useEffect(() => {
     if (!mounted) return
@@ -63,15 +63,14 @@ export function BiolinkPreview() {
   }, [featuredTemplates.length, mounted])
 
   const generateRandomDesign = async (templates: typeof TEMPLATES, index: number) => {
-  const template = templates[index]
-  
-  const newButtonColor = getRandomHexColor()
-  const newTextColor = getContrastTextColor(newButtonColor)
+    const template = templates[index]
 
-  const randomUser = LOCAL_USERS[Math.floor(Math.random() * LOCAL_USERS.length)]
+    const newButtonColor = getRandomHexColor()
+    const newTextColor = getContrastTextColor(newButtonColor)
 
-    let newAvatarUrl = randomUser.avatarUrl || "/placeholder.svg"
-    let newDisplayName = randomUser.displayName || template.profile.displayName
+    const placeholderUser = { avatarUrl: "/placeholder.svg", displayName: "Ejemplo" };
+    let newAvatarUrl = placeholderUser.avatarUrl;
+    let newDisplayName = placeholderUser.displayName || template.profile.displayName
 
     // Use a local SVG background from PREDEFINED_BACKGROUNDS as a reliable fallback
     // This avoids external API dependencies like Picsum which can fail (ERR_ABORTED)
@@ -138,8 +137,8 @@ export function BiolinkPreview() {
       ? { backgroundImage: selectedBackground.backgroundImageUrl.startsWith('linear-gradient') ? selectedBackground.backgroundImageUrl : `url(${selectedBackground.backgroundImageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
       : { backgroundColor: selectedBackground.backgroundColor }
     : currentDesign.backgroundImageUrl
-    ? { backgroundImage: `url(${currentDesign.backgroundImageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
-    : { backgroundColor: currentDesign.backgroundColor }
+      ? { backgroundImage: `url(${currentDesign.backgroundImageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+      : { backgroundColor: currentDesign.backgroundColor }
 
   const buttonRadius =
     template.profile.buttonStyle === "pill" ? "9999px" : template.profile.buttonStyle === "square" ? "0" : "12px"

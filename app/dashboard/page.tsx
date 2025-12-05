@@ -5,7 +5,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus, ExternalLink, Eye, MousePointer, TrendingUp, Share2 } from "lucide-react"
-import { getBiolinks, createBiolink, type BiolinkProfile } from "@/lib/biolink-store"
+import { BiolinkService } from "@/lib/biolink-service"
+import { type BiolinkProfile } from "@/lib/types"
 import { ShareDialog } from "@/components/dashboard/share-dialog"
 
 import { useAuth } from "@/components/auth-provider"
@@ -18,33 +19,57 @@ export default function DashboardPage() {
   const [biolinks, setBiolinks] = useState<BiolinkProfile[]>([])
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
   const [selectedBiolinkUsername, setSelectedBiolinkUsername] = useState<string | null>(null)
+  const [isCreating, setIsCreating] = useState(false)
 
   useEffect(() => {
     setMounted(true)
     if (!isLoading && !user) {
       router.push("/login")
+      return
     }
-    setBiolinks(getBiolinks())
+
+    if (user) {
+      const fetchBiolinks = async () => {
+        const data = await BiolinkService.getBiolinks(user.id)
+        setBiolinks(data)
+      }
+      fetchBiolinks()
+    }
   }, [isLoading, user, router])
 
-  const handleCreateBiolink = () => {
+  const handleCreateBiolink = async () => {
     if (!user) return
-    // Generar un username único si ya existe
-    // Use user metadata for username if available, otherwise fallback
-    const baseUsername = user.user_metadata?.username || `user${Date.now()}`
-    let username = baseUsername
-    let counter = 1
-    while (biolinks.some(b => b.username === username)) {
-      username = `${baseUsername}-${counter}`
-      counter++
+    setIsCreating(true)
+
+    try {
+      // Generar un username único si ya existe
+      // Use user metadata for username if available, otherwise fallback
+      const baseUsername = user.user_metadata?.username || `user${Date.now()}`
+      let username = baseUsername
+      let counter = 1
+
+      // Check if username exists (simple check against current list, ideally should check DB)
+      // For now, we'll rely on DB unique constraint or simple client check if list is full
+      // Better approach: try to create, if fails with unique constraint, retry with new name
+      // But for simplicity in this step, let's just try to create with a timestamp if base fails
+      // actually, let's just append timestamp to ensure uniqueness for now
+      if (biolinks.some(b => b.username === username)) {
+        username = `${baseUsername}-${Date.now()}`
+      }
+
+      const newBiolink = await BiolinkService.createBiolink(user.id, username)
+
+      if (newBiolink) {
+        setBiolinks([newBiolink, ...biolinks])
+        // Abrir diálogo de compartir automáticamente
+        setSelectedBiolinkUsername(newBiolink.username)
+        setShareDialogOpen(true)
+      }
+    } catch (error) {
+      console.error("Error creating biolink", error)
+    } finally {
+      setIsCreating(false)
     }
-
-    const newBiolink = createBiolink(username)
-    setBiolinks([...biolinks, newBiolink])
-
-    // Abrir diálogo de compartir automáticamente
-    setSelectedBiolinkUsername(newBiolink.username)
-    setShareDialogOpen(true)
   }
 
   const openShareDialog = (username: string) => {

@@ -40,9 +40,20 @@ export function LoginForm() {
         router.push("/dashboard")
       }
     } catch (err: any) {
-      if (err.message.includes("Email not confirmed")) {
+      // Temporary logging to debug
+      console.error('Supabase error:', err);
+      console.error('Error message:', err.message);
+      console.error('Error status:', err.status);
+
+      // Check if Supabase is not configured (only if using placeholder values)
+      const isPlaceholder = err.message?.includes('placeholder') ||
+        err.message?.includes('Invalid API key');
+
+      if (isPlaceholder) {
+        setError("Supabase no está configurado. Por favor, configura las variables de entorno NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.")
+      } else if (err.message?.includes("Email not confirmed")) {
         setError("Por favor, confirma tu correo electrónico antes de iniciar sesión.")
-      } else if (err.message.includes("Invalid login credentials")) {
+      } else if (err.message?.includes("Invalid login credentials")) {
         setError("Credenciales inválidas. Por favor, verifica tu correo y contraseña.")
       } else {
         setError(err.message || "Error al iniciar sesión")

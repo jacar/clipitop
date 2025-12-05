@@ -8,7 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch"
 import { Save } from "lucide-react"
 
+import { useAuth } from "@/components/auth-provider"
+import { supabase } from "@/lib/supabase"
+import { toast } from "sonner"
+
 export default function SettingsPage() {
+  const { user: authUser } = useAuth()
   const [mounted, setMounted] = useState(false)
   const [user, setUser] = useState({ name: "", email: "", username: "" })
   const [notifications, setNotifications] = useState({
@@ -19,14 +24,38 @@ export default function SettingsPage() {
 
   useEffect(() => {
     setMounted(true)
-    const storedUser = localStorage.getItem("user")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+    if (authUser) {
+      setUser({
+        name: authUser.user_metadata?.full_name || "",
+        email: authUser.email || "",
+        username: authUser.user_metadata?.username || "",
+      })
     }
-  }, [])
+  }, [authUser])
 
-  const handleSave = () => {
-    localStorage.setItem("user", JSON.stringify(user))
+  const handleSave = async () => {
+    if (!authUser) return
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        email: user.email,
+        data: {
+          full_name: user.name,
+          username: user.username,
+        }
+      })
+
+      if (error) throw error
+
+      toast.success("Perfil actualizado", {
+        description: "Tus cambios han sido guardados correctamente."
+      })
+    } catch (error) {
+      console.error("Error updating profile:", error)
+      toast.error("Error al actualizar", {
+        description: "No se pudieron guardar los cambios."
+      })
+    }
   }
 
   if (!mounted) {

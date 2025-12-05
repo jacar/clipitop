@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { BiolinkCarousel } from "./biolink-carousel"
-import { User, LOCAL_USERS } from "@/lib/local-users"
+// Removed import of local users as they are no longer needed
 
 export function Hero() {
   return (
@@ -35,21 +35,8 @@ export function Hero() {
               </Button>
             </div>
 
-            <div className="mt-8 flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex -space-x-2">
-                {LOCAL_USERS.slice(0, 4).map((user: User, index: number) => (
-                  <div
-                    key={index}
-                    className="h-8 w-8 rounded-full border-2 border-background bg-muted"
-                    style={{
-                      backgroundImage: `url(${user.avatarUrl})`,
-                      backgroundSize: "cover",
-                    }}
-                  />
-                ))}
-              </div>
-              <span>+50,000 creadores activos</span>
-            </div>
+// Placeholder: removed example users display
+            {/* Example users section removed */}
           </div>
 
           <div className="flex justify-center lg:justify-end">

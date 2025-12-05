@@ -27,7 +27,8 @@ import {
   Check,
 } from "lucide-react"
 import Link from "next/link"
-import { getBiolink, updateBiolink, addLink, updateLink, deleteLink, type BiolinkProfile } from "@/lib/biolink-store"
+import { BiolinkService } from "@/lib/biolink-service"
+import { type BiolinkProfile } from "@/lib/types"
 import { BiolinkPreviewEditor } from "@/components/dashboard/biolink-preview-editor"
 import { PREDEFINED_BACKGROUNDS } from "@/lib/templates"
 import { toast } from "sonner"
@@ -56,21 +57,31 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
 
   useEffect(() => {
     setMounted(true)
-    const data = getBiolink(resolvedParams.id)
-    if (data) {
-      setBiolink(data)
-    } else {
-      router.push("/dashboard")
+    const fetchBiolink = async () => {
+      const data = await BiolinkService.getBiolinkById(resolvedParams.id)
+      if (data) {
+        setBiolink(data)
+      } else {
+        router.push("/dashboard")
+      }
     }
+    fetchBiolink()
   }, [resolvedParams.id, router])
 
   const handleSave = async () => {
     if (!biolink) return
     setIsSaving(true)
-    const result = updateBiolink(biolink.id, biolink)
-    await new Promise((r) => setTimeout(r, 500))
+    // For now, updateBiolink only updates profile fields.
+    // Links are updated immediately when added/deleted/toggled.
+    // But we might want to save everything here if we change the logic.
+    // Currently, local state is updated optimistically, but we should rely on DB.
+    // However, for profile fields (bio, theme, etc), we need to save them.
+
+    const result = await BiolinkService.updateBiolink(biolink.id, biolink)
+
     setIsSaving(false)
     if (result) {
+      setBiolink(result)
       toast.success("Biolink guardado exitosamente", {
         description: "Todos tus cambios han sido guardados correctamente."
       })
@@ -83,9 +94,9 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     }
   }
 
-  const handleAddLink = () => {
+  const handleAddLink = async () => {
     if (!biolink || !newLinkTitle || !newLinkUrl) return
-    const result = addLink(biolink.id, {
+    const result = await BiolinkService.addLink(biolink.id, {
       title: newLinkTitle,
       url: newLinkUrl.startsWith("http") ? newLinkUrl : `https://${newLinkUrl}`,
       enabled: true,
@@ -97,15 +108,19 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     }
   }
 
-  const handleDeleteLink = (linkId: string) => {
+  const handleDeleteLink = async (linkId: string) => {
     if (!biolink) return
-    const result = deleteLink(biolink.id, linkId)
+    const result = await BiolinkService.deleteLink(biolink.id, linkId)
     if (result) setBiolink(result)
   }
 
-  const handleToggleLink = (linkId: string, enabled: boolean) => {
+  const handleToggleLink = async (linkId: string, enabled: boolean) => {
     if (!biolink) return
-    const result = updateLink(biolink.id, linkId, { enabled })
+    // Optimistic update
+    const updatedLinks = biolink.links.map(l => l.id === linkId ? { ...l, enabled } : l)
+    setBiolink({ ...biolink, links: updatedLinks })
+
+    const result = await BiolinkService.updateLink(biolink.id, linkId, { enabled })
     if (result) setBiolink(result)
   }
 

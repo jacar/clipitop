@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, Loader2, Check } from "lucide-react"
-import { createBiolink, updateBiolink } from "@/lib/biolink-store"
 import { getTemplateById } from "@/lib/templates"
 import { supabase } from "@/lib/supabase"
 
@@ -44,6 +43,7 @@ export function RegisterForm() {
           data: {
             full_name: formData.name,
             username: formData.username,
+            template_id: templateId, // Save template preference
           },
         },
       })
@@ -55,31 +55,20 @@ export function RegisterForm() {
       if (data.user && !data.session) {
         // Email confirmation required
         setIsSuccess(true)
-        // Create initial biolink structure in local storage for now (optional, as they can't login yet)
-        const newBiolink = createBiolink(formData.username)
-        if (template) {
-          updateBiolink(newBiolink.id, {
-            displayName: formData.name || template.profile.displayName,
-            bio: template.profile.bio,
-            theme: template.profile.theme,
-            backgroundColor: template.profile.backgroundColor,
-            buttonStyle: template.profile.buttonStyle,
-            buttonColor: template.profile.buttonColor,
-            textColor: template.profile.textColor,
-            links: template.profile.links,
-            socialLinks: template.profile.socialLinks,
-          })
-        } else {
-          updateBiolink(newBiolink.id, {
-            displayName: formData.name,
-          })
-        }
       } else if (data.user && data.session) {
         // Auto-login (email confirmation disabled)
         router.push("/onboarding")
       }
     } catch (err: any) {
-      setError(err.message || "Error al crear la cuenta")
+      // Check if Supabase is not configured (only if using placeholder values)
+      const isPlaceholder = err.message?.includes('placeholder') ||
+        err.message?.includes('Invalid API key');
+
+      if (isPlaceholder) {
+        setError("Supabase no está configurado. Por favor, configura las variables de entorno NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.")
+      } else {
+        setError(err.message || "Error al crear la cuenta")
+      }
     } finally {
       setIsLoading(false)
     }
