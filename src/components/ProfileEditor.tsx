@@ -450,7 +450,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
 
         // Guardar galería
         await supabase
-          .from(TABLES.GALLERY)
+          .from(TABLES.GALLERY_IMAGES)
           .delete()
           .eq('profile_id', currentProfileId);
 
@@ -462,7 +462,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             description: image.description,
           }));
 
-          await supabase.from(TABLES.GALLERY).insert(galleryToInsert);
+          await supabase.from(TABLES.GALLERY_IMAGES).insert(galleryToInsert);
         }
 
       }
