@@ -236,6 +236,35 @@ export async function uploadBackgroundImage(file: File, userId: string): Promise
   }
 }
 
+// Función para borrar imagen (bucket genérico)
+export async function deleteImage(bucket: string, path: string): Promise<boolean> {
+  try {
+    // El path suele ser la URL completa, necesitamos extraer la ruta relativa al bucket
+    // Ejemplo URL: https://xyz.supabase.co/storage/v1/object/public/gallery-images/user-123.jpg
+    // Path relativo: user-123.jpg
+
+    // Extraer nombre del archivo de la URL
+    const urlParts = path.split('/');
+    const fileName = urlParts[urlParts.length - 1];
+
+    if (!fileName) return false;
+
+    const { error } = await supabase.storage
+      .from(bucket)
+      .remove([fileName]);
+
+    if (error) {
+      console.error(`Error eliminando archivo de ${bucket}:`, error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error en deleteImage:', error);
+    return false;
+  }
+}
+
 // Función para subir imagen de galería
 export async function uploadGalleryImage(file: File, userId: string): Promise<string | null> {
   try {
@@ -286,7 +315,7 @@ export async function getProfileAnalytics(profileId: string, days: number = 30) 
     }
 
     // Obtener clicks en enlaces
-    const { data: profile, error: profileError } = await supabase
+    const { data: profileWithLinks, error: profileError } = await supabase
       .from(TABLES.PROFILES)
       .select(`
         *,
@@ -303,6 +332,8 @@ export async function getProfileAnalytics(profileId: string, days: number = 30) 
       console.error('Error al obtener perfil:', profileError);
     }
 
+    const profileData = profileWithLinks as any; // Cast to any to bypass strict type check on join
+
     // Agrupar vistas por día
     const viewsByDay: { [key: string]: number } = {};
     views?.forEach((view) => {
@@ -311,9 +342,9 @@ export async function getProfileAnalytics(profileId: string, days: number = 30) 
     });
 
     return {
-      totalViews: profile?.views_count || 0,
+      totalViews: profileData?.views_count || 0,
       viewsByDay,
-      linkClicks: profile?.links || [],
+      linkClicks: profileData?.biolink_links || [], // Access using the actual table name property from the join
       recentViews: views?.length || 0,
     };
   } catch (error) {

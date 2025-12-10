@@ -69,7 +69,7 @@ export function LoginModal({ onClose, onLogin, onSwitchToSignup, isSignup = fals
             </a>
           </div>
           <h2 className="text-2xl mb-2">{isSignup ? 'Crear Cuenta' : 'Iniciar Sesión'}</h2>
-          <p className="text-gray-600">{isSignup ? 'Regístrate en Clipli.top' : 'Accede a tu cuenta'}</p>
+          <p className="text-gray-600 mb-2">{isSignup ? 'Regístrate en Clipli.top' : 'Accede a tu cuenta'}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

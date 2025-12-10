@@ -1,7 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { supabase, TABLES } from '../lib/supabase';
-import { uploadProfileImage, uploadBackgroundImage, uploadGalleryImage, checkUsernameAvailability } from '../lib/supabase-functions';
+import { uploadProfileImage, uploadBackgroundImage, uploadGalleryImage, checkUsernameAvailability, deleteImage } from '../lib/supabase-functions';
+
+// ... lines 5-550 ...
+
+const removeGalleryImage = async (id: string) => {
+  if (!confirm('¿Estás seguro de querer eliminar esta imagen?')) return;
+
+  const imageToDelete = galleryImages.find(image => image.id === id);
+  if (imageToDelete) {
+    // Intentar borrar del storage (si falla, eliminamos de la UI igual para no bloquear)
+    await deleteImage('gallery-images', imageToDelete.image_url);
+  }
+  setGalleryImages(galleryImages.filter(image => image.id !== id));
+};
 import { Analytics } from './Analytics';
 import { getTemplateById } from '../lib/templates';
 import { copyToClipboard } from '../lib/clipboard';
@@ -548,7 +561,13 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
     }
   };
 
-  const removeGalleryImage = (id: string) => {
+  const removeGalleryImage = async (id: string) => {
+    if (!confirm('¿Estás seguro de querer eliminar esta imagen?')) return;
+
+    const imageToDelete = galleryImages.find(image => image.id === id);
+    if (imageToDelete) {
+      await deleteImage('gallery-images', imageToDelete.image_url);
+    }
     setGalleryImages(galleryImages.filter(image => image.id !== id));
   };
 

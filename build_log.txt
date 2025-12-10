@@ -1,0 +1,26 @@
+
+> Clone Bio Link Site (Community)@0.1.0 build C:\Users\Dev\Downloads\nuevabiolink
+> vite build
+
+[36mvite v6.3.5 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 3 modules transformed.
+[31m✗[39m Build failed in 57ms
+[31merror during build:
+[31m[vite:css] Failed to load PostCSS config (searchPath: C:/Users/Dev/Downloads/nuevabiolink): [Error] Loading PostCSS Plugin failed: Cannot find module '@tailwindcss/postcss'
+Require stack:
+- C:\Users\Dev\Downloads\nuevabiolink\postcss.config.mjs
+
+(@C:\Users\Dev\Downloads\nuevabiolink\postcss.config.mjs)
+Error: Loading PostCSS Plugin failed: Cannot find module '@tailwindcss/postcss'
+Require stack:
+- C:\Users\Dev\Downloads\nuevabiolink\postcss.config.mjs
+
+(@C:\Users\Dev\Downloads\nuevabiolink\postcss.config.mjs)
+    at load (file:///C:/Users/Dev/Downloads/nuevabiolink/node_modules/.pnpm/vite@6.3.5_@types+node@20.19.25/node_modules/vite/dist/node/chunks/dep-DBxKXgDP.js:11776:11)
+    at async Promise.all (index 0)
+    at async plugins (file:///C:/Users/Dev/Downloads/nuevabiolink/node_modules/.pnpm/vite@6.3.5_@types+node@20.19.25/node_modules/vite/dist/node/chunks/dep-DBxKXgDP.js:11805:12)
+    at async processResult (file:///C:/Users/Dev/Downloads/nuevabiolink/node_modules/.pnpm/vite@6.3.5_@types+node@20.19.25/node_modules/vite/dist/node/chunks/dep-DBxKXgDP.js:11876:14)[31m
+file: [36mC:/Users/Dev/Downloads/nuevabiolink/src/index.css[31m
+[39m
+ ELIFECYCLE  Command failed with exit code 1.
