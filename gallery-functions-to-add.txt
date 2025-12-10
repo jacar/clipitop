@@ -1,0 +1,13 @@
+// Funciones para agregar después de removeGalleryImage (línea 504)
+
+const updateGalleryImageDescription = (id: string, description: string) => {
+  setGalleryImages(galleryImages.map(image =>
+    image.id === id ? { ...image, description } : image
+  ));
+};
+
+const updateGalleryImageLink = (id: string, link: string) => {
+  setGalleryImages(galleryImages.map(image =>
+    image.id === id ? { ...image, link } : image
+  ));
+};
