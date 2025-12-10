@@ -8,8 +8,12 @@ export async function signInWithGoogle() {
       provider: 'google',
       options: {
         redirectTo: (() => {
-          const url = import.meta.env.VITE_SITE_URL || window.location.origin;
+          // Prioridad: variable de entorno -> hardcoded si es prod -> origin
+          const productionUrl = 'https://clipli.top';
+          const url = import.meta.env.VITE_SITE_URL || (import.meta.env.PROD ? productionUrl : window.location.origin);
+
           console.log('Google Auth Redirect URL:', url); // DEBUG
+          console.log('Is Prod:', import.meta.env.PROD); // DEBUG
           return url;
         })(),
       },
