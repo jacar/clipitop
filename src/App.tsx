@@ -31,6 +31,9 @@ export default function App() {
     // Verificar sesión actual
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        setShowEditor(true);
+      }
       setLoading(false);
     });
 
@@ -39,7 +42,24 @@ export default function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user && !showEditor) {
+        setShowEditor(true);
+      }
     });
+
+    // Manejar enrutamiento inicial basado en URL
+    const path = window.location.pathname;
+    if (path && path !== '/' && path !== '/index.html') {
+      const route = path.substring(1); // quitar slash inicial
+
+      // Rutas estáticas o reservadas
+      if (['terms', 'privacy', 'cookies'].includes(route)) {
+        setViewingPage(route);
+      } else {
+        // Asumir que es un nombre de usuario
+        setViewingProfile(route);
+      }
+    }
 
     return () => subscription.unsubscribe();
   }, []);
