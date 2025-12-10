@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Instagram, Twitter, Youtube, Facebook, Linkedin, ExternalLink, ArrowLeft } from 'lucide-react';
-import { Footer } from './Footer';
+
 import { supabase, TABLES } from '../lib/supabase';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { getProfileByUsername, trackProfileView, trackLinkClick, trackSocialClick } from '../lib/supabase-functions';
@@ -309,9 +309,7 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
         </div>
 
         {/* Footer */}
-        <div className="mt-12">
-          <Footer onNavigate={onNavigate} />
-        </div>
+
       </div>
       {/* WhatsApp Floating Button */}
       {
