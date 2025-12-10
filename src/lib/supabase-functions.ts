@@ -7,7 +7,11 @@ export async function signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: import.meta.env.VITE_SITE_URL || window.location.origin,
+        redirectTo: (() => {
+          const url = import.meta.env.VITE_SITE_URL || window.location.origin;
+          console.log('Google Auth Redirect URL:', url); // DEBUG
+          return url;
+        })(),
       },
     });
 
