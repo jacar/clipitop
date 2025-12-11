@@ -1214,6 +1214,91 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
               </div>
             </div>
 
+            {/* WhatsApp Floating Button Section */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl">Botón Flotante de WhatsApp</h2>
+                <div className="flex items-center">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={whatsappActive}
+                      onChange={(e) => setWhatsappActive(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                  </label>
+                </div>
+              </div>
+
+              {whatsappActive && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Número de WhatsApp
+                    </label>
+                    <input
+                      type="text"
+                      value={whatsappNumber}
+                      onChange={(e) => setWhatsappNumber(e.target.value)}
+                      placeholder="Ej: 5215555555555 (con código de país)"
+                      className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Mensaje Predefinido
+                    </label>
+                    <input
+                      type="text"
+                      value={whatsappMessage}
+                      onChange={(e) => setWhatsappMessage(e.target.value)}
+                      placeholder="Ej: Hola, quiero más información..."
+                      className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Posición
+                      </label>
+                      <div className="flex bg-gray-100 p-1 rounded-lg">
+                        <button
+                          onClick={() => setWhatsappPosition('left')}
+                          className={`flex-1 py-1 px-3 text-sm rounded-md transition ${whatsappPosition === 'left' ? 'bg-white shadow text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                          Izquierda
+                        </button>
+                        <button
+                          onClick={() => setWhatsappPosition('right')}
+                          className={`flex-1 py-1 px-3 text-sm rounded-md transition ${whatsappPosition === 'right' ? 'bg-white shadow text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                          Derecha
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Color del Botón
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={whatsappColor}
+                          onChange={(e) => setWhatsappColor(e.target.value)}
+                          className="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0 overflow-hidden"
+                        />
+                        <span className="text-sm text-gray-500 uppercase">{whatsappColor}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Gallery Section */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
