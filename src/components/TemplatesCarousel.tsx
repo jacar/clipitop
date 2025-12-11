@@ -11,8 +11,30 @@ export function TemplatesCarousel({ onSelectTemplate }: TemplatesCarouselProps) 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  const itemsPerView = 3;
-  const maxIndex = Math.max(0, templates.length - itemsPerView);
+  const [itemsPerView, setItemsPerView] = useState(3);
+  const [maxIndex, setMaxIndex] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      let newItemsPerView = 1;
+      if (window.innerWidth >= 1024) {
+        newItemsPerView = 3;
+      } else if (window.innerWidth >= 640) {
+        newItemsPerView = 2;
+      }
+
+      setItemsPerView(newItemsPerView);
+      const newMaxIndex = Math.max(0, templates.length - newItemsPerView);
+      setMaxIndex(newMaxIndex);
+
+      // Ensure current index is within bounds
+      setCurrentIndex(curr => Math.min(curr, newMaxIndex));
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -110,9 +132,8 @@ export function TemplatesCarousel({ onSelectTemplate }: TemplatesCarouselProps) 
               setCurrentIndex(index);
               setIsAutoPlaying(false);
             }}
-            className={`h-2 rounded-full transition-all ${
-              index === currentIndex ? 'w-8 bg-purple-600' : 'w-2 bg-gray-300'
-            }`}
+            className={`h-2 rounded-full transition-all ${index === currentIndex ? 'w-8 bg-purple-600' : 'w-2 bg-gray-300'
+              }`}
           />
         ))}
       </div>
