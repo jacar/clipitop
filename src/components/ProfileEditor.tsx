@@ -44,6 +44,7 @@ import {
   Linkedin
 } from 'lucide-react';
 import { Footer } from './Footer';
+import { EditorPreview } from './EditorPreview';
 
 interface ProfileEditorProps {
   onClose: () => void;
