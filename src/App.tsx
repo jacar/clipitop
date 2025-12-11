@@ -197,14 +197,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      {viewingPage ? (
+      {viewingPage === 'update-password' ? (
+        <UpdatePassword />
+      ) : viewingPage ? (
         <StaticPage
           pageId={viewingPage}
           onBack={() => setViewingPage(null)}
           onNavigate={(page) => setViewingPage(page)}
         />
-      ) : viewingPage === 'update-password' ? (
-        <UpdatePassword />
       ) : viewingProfile ? (
         <PublicProfile
           username={viewingProfile}
