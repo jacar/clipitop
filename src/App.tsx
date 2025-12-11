@@ -11,8 +11,9 @@ import { TemplatesSection } from './components/TemplatesSection';
 import { TemplatesCarousel } from './components/TemplatesCarousel';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { PricingSection } from './components/PricingSection';
-import { ActionButtons } from './components/ActionButtons';
+
 import { StaticPage } from './components/StaticPage';
+import { UpdatePassword } from './components/UpdatePassword';
 import { supabase, TABLES } from './lib/supabase';
 import { getTemplateById } from './lib/templates';
 
@@ -53,7 +54,7 @@ export default function App() {
       const route = path.substring(1); // quitar slash inicial
 
       // Rutas estáticas o reservadas
-      if (['terms', 'privacy', 'cookies'].includes(route)) {
+      if (['terms', 'privacy', 'cookies', 'update-password'].includes(route)) {
         setViewingPage(route);
       } else {
         // Asumir que es un nombre de usuario
@@ -202,6 +203,8 @@ export default function App() {
           onBack={() => setViewingPage(null)}
           onNavigate={(page) => setViewingPage(page)}
         />
+      ) : viewingPage === 'update-password' ? (
+        <UpdatePassword />
       ) : viewingProfile ? (
         <PublicProfile
           username={viewingProfile}
