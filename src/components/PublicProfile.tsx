@@ -187,10 +187,22 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
 
         {/* Profile Card */}
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-          {/* Header con gradiente */}
+          {/* Header con gradiente o imagen */}
           <div
             className="h-32 bg-cover bg-center"
-            style={currentTheme.type === 'image' ? { backgroundImage: `url(${currentTheme.value})`, backgroundRepeat: currentTheme.backgroundRepeat || 'no-repeat', backgroundSize: currentTheme.backgroundSize || 'contain' } : currentTheme.type === 'texture' ? { backgroundImage: currentTheme.value } : { backgroundImage: `linear-gradient(to right, ${currentTheme.value.replace('from-', '').replace('to-', '')})` }}
+            style={
+              profile.background_image_url
+                ? {
+                  backgroundImage: `url(${profile.background_image_url})`,
+                  backgroundSize: typeof profile.theme !== 'string' && profile.theme.backgroundSize ? profile.theme.backgroundSize : 'cover',
+                  backgroundRepeat: typeof profile.theme !== 'string' && profile.theme.backgroundRepeat ? profile.theme.backgroundRepeat : 'no-repeat'
+                }
+                : currentTheme.type === 'image'
+                  ? { backgroundImage: `url(${currentTheme.value})`, backgroundRepeat: currentTheme.backgroundRepeat || 'no-repeat', backgroundSize: currentTheme.backgroundSize || 'contain' }
+                  : currentTheme.type === 'texture'
+                    ? { backgroundImage: currentTheme.value }
+                    : { backgroundImage: `linear-gradient(to right, ${currentTheme.value.replace('from-', '').replace('to-', '')})` }
+            }
           ></div>
 
           {/* Profile Content */}
@@ -259,25 +271,57 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
 
               {/* Links */}
               <div className="w-full max-w-lg space-y-4">
-                {profile.links.map((link: any, index: number) => (
-                  <button
-                    key={link.id}
-                    onClick={() => handleLinkClick(link)}
-                    className={`w-full ${index === 0
-                      ? currentTheme.type === 'image'
-                        ? 'bg-cover bg-center text-white'
-                        : `bg-gradient-to-r ${currentTheme.value} text-white`
-                      : 'bg-gray-50 hover:bg-gray-100'
-                      } rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group`}
-                    style={index === 0 && currentTheme.type === 'image' ? { backgroundImage: `url(${currentTheme.value})`, backgroundRepeat: currentTheme.backgroundRepeat || 'no-repeat', backgroundSize: currentTheme.backgroundSize || 'contain' } : index === 0 && currentTheme.type === 'texture' ? { backgroundImage: currentTheme.value } : {}}
-                  >
-                    <span className="flex-1 text-center">{link.title}</span>
-                    <ExternalLink
-                      size={18}
-                      className={`${index === 0 ? 'text-white' : 'text-gray-400'} opacity-0 group-hover:opacity-100 transition`}
-                    />
-                  </button>
-                ))}
+                {profile.links.map((link: any, index: number) => {
+                  // Determine background style
+                  let bgStyle = {};
+                  let textColorClass = '';
+
+                  if (link.button_color) {
+                    bgStyle = { backgroundColor: link.button_color };
+                    // If custom color, text color should be respected or default to black/white depending on preference, 
+                    // but here we use link.text_color if available
+                  } else if (index === 0) {
+                    if (currentTheme.type === 'image') {
+                      bgStyle = {
+                        backgroundImage: `url(${currentTheme.value})`,
+                        backgroundSize: currentTheme.backgroundSize || 'contain',
+                        backgroundRepeat: currentTheme.backgroundRepeat || 'no-repeat'
+                      };
+                    } else if (currentTheme.type === 'texture') {
+                      bgStyle = { backgroundImage: currentTheme.value };
+                    } else {
+                      // gradient
+                      bgStyle = { backgroundImage: `linear-gradient(to right, ${currentTheme.value.replace('from-', '').replace('to-', '')})` };
+                    }
+                  } else {
+                    bgStyle = {}; // Default class handling
+                  }
+
+                  const buttonClass = link.button_color
+                    ? `w-full rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group`
+                    : index === 0
+                      ? `w-full rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group ${currentTheme.type === 'image' || currentTheme.type === 'gradient' ? 'text-white' : ''}`
+                      : `w-full bg-gray-50 hover:bg-gray-100 rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group`;
+
+                  return (
+                    <button
+                      key={link.id}
+                      onClick={() => handleLinkClick(link)}
+                      className={buttonClass}
+                      style={{
+                        ...bgStyle,
+                        color: link.text_color ? link.text_color : (index === 0 && !link.button_color ? 'white' : undefined)
+                      }}
+                    >
+                      <span className="flex-1 text-center" style={link.text_color ? { color: link.text_color } : {}}>{link.title}</span>
+                      <ExternalLink
+                        size={18}
+                        className="opacity-0 group-hover:opacity-100 transition"
+                        style={link.text_color ? { color: link.text_color } : {}}
+                      />
+                    </button>
+                  )
+                })}
 
                 {profile.links.length === 0 && (
                   <div className="text-center py-12">

@@ -431,13 +431,22 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
           .delete()
           .eq('profile_id', currentProfileId);
 
-        const socialLinksToInsert = Object.entries(socials)
-          .filter(([_, value]) => value.trim())
-          .map(([platform, username]) => ({
-            profile_id: currentProfileId,
-            platform,
-            username,
-          }));
+        const socialLinksToInsert = [
+          ...Object.entries(socials)
+            .filter(([_, value]) => value.trim())
+            .map(([platform, username]) => ({
+              profile_id: currentProfileId,
+              platform,
+              username,
+            })),
+          ...(youtubeUrl ? [{ profile_id: currentProfileId, platform: 'youtube', username: youtubeUrl }] : []),
+          ...(facebookUrl ? [{ profile_id: currentProfileId, platform: 'facebook', username: facebookUrl }] : []),
+          // Website and Email are usually not considered "socials" for the icon bar in the same way, 
+          // but if the user expects them, we should add them if the UI supports them. 
+          // Looking at PublicProfile, it has icons for: instagram, twitter, youtube, facebook, linkedin.
+          // It DOES NOT have icons for website or email in the social bar section.
+          // So I will only add Youtube and Facebook here as they were the ones missing from 'socials' object but present in separate state.
+        ];
 
         if (socialLinksToInsert.length > 0) {
           await supabase.from(TABLES.SOCIAL_LINKS).insert(socialLinksToInsert);
