@@ -30,6 +30,26 @@ export async function signInWithGoogle() {
   }
 }
 
+// Función para restablecer contraseña
+export async function resetPassword(email: string) {
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: (() => {
+        const productionUrl = 'https://clipli.top/update-password';
+        // En desarrollo puede ser http://localhost:5173/update-password
+        const url = import.meta.env.PROD ? productionUrl : `${window.location.origin}/update-password`;
+        return url;
+      })(),
+    });
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error en resetPassword:', error);
+    throw error;
+  }
+}
+
 // Función para verificar si un username está disponible
 export async function checkUsernameAvailability(username: string): Promise<boolean> {
   try {
