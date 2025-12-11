@@ -56,7 +56,7 @@ export async function checkUsernameAvailability(username: string): Promise<boole
     const { data, error } = await supabase
       .from(TABLES.PROFILES)
       .select('username')
-      .eq('username', username)
+      .ilike('username', username)
       .maybeSingle();
 
     if (error) {
@@ -77,7 +77,7 @@ export async function getProfileByUsername(username: string) {
     const { data: profile, error } = await supabase
       .from(TABLES.PROFILES)
       .select('*')
-      .eq('username', username)
+      .ilike('username', username)
       .single();
 
     if (error) {

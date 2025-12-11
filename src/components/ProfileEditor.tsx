@@ -346,7 +346,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
         const { error } = await supabase
           .from(TABLES.PROFILES)
           .update({
-            username,
+            username: username.trim(),
             display_name: displayName,
             bio,
             profile_image: profileImage,
@@ -373,7 +373,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
           .from(TABLES.PROFILES)
           .insert({
             user_id: user.id,
-            username,
+            username: username.trim(),
             display_name: displayName,
             bio,
             profile_image: profileImage,

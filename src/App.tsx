@@ -51,7 +51,8 @@ export default function App() {
     // Manejar enrutamiento inicial basado en URL
     const path = window.location.pathname;
     if (path && path !== '/' && path !== '/index.html') {
-      const route = path.substring(1); // quitar slash inicial
+      const rawRoute = path.substring(1); // quitar slash inicial
+      const route = decodeURIComponent(rawRoute);
 
       // Rutas estáticas o reservadas
       if (['terms', 'privacy', 'cookies', 'update-password'].includes(route)) {
