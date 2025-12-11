@@ -314,13 +314,13 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
       {/* WhatsApp Floating Button */}
       {
         profile.whatsapp_active && profile.whatsapp_number && (
-          <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none px-4">
-            <div className={`w-full max-w-2xl flex ${profile.whatsapp_position === 'left' ? 'justify-start' : 'justify-end'}`}>
+          <div className="fixed bottom-0 left-0 right-0 z-[9999] pointer-events-none flex justify-center pb-6 px-6 safe-area-bottom">
+            <div className="w-full max-w-2xl flex items-end">
               <a
                 href={`https://wa.me/${profile.whatsapp_number}?text=${encodeURIComponent(profile.whatsapp_message || '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white p-4 rounded-full shadow-lg hover:scale-110 transition-all duration-300 flex items-center justify-center hover:brightness-110 pointer-events-auto"
+                className={`pointer-events-auto p-4 rounded-full shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center text-white ${profile.whatsapp_position === 'left' ? 'mr-auto' : 'ml-auto'}`}
                 style={{ backgroundColor: profile.whatsapp_color || '#25D366' }}
                 aria-label="Contactar por WhatsApp"
               >
