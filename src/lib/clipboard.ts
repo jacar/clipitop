@@ -1,11 +1,15 @@
 // Función para copiar texto al portapapeles con fallback
 export async function copyToClipboard(text: string): Promise<boolean> {
   try {
-    // Intentar primero el método del fallback que es más confiable en iframes
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    // Fallback para navegadores antiguos o contextos no seguros
     return fallbackCopyToClipboard(text);
   } catch (err) {
-    console.error('Error al copiar:', err);
-    return false;
+    console.error('Error al copiar (clipboard API):', err);
+    return fallbackCopyToClipboard(text);
   }
 }
 
@@ -14,7 +18,7 @@ function fallbackCopyToClipboard(text: string): boolean {
     // Crear un elemento de texto temporal
     const textArea = document.createElement('textarea');
     textArea.value = text;
-    
+
     // Hacer el textarea invisible pero accesible
     textArea.style.position = 'fixed';
     textArea.style.top = '0';
@@ -29,9 +33,9 @@ function fallbackCopyToClipboard(text: string): boolean {
     textArea.style.opacity = '0';
     textArea.style.zIndex = '-1';
     textArea.setAttribute('readonly', '');
-    
+
     document.body.appendChild(textArea);
-    
+
     // Para iOS
     if (navigator.userAgent.match(/ipad|iphone/i)) {
       const range = document.createRange();
@@ -46,7 +50,7 @@ function fallbackCopyToClipboard(text: string): boolean {
       textArea.focus();
       textArea.select();
     }
-    
+
     // Intentar copiar
     let successful = false;
     try {
@@ -54,10 +58,10 @@ function fallbackCopyToClipboard(text: string): boolean {
     } catch (err) {
       console.error('execCommand falló:', err);
     }
-    
+
     // Limpiar
     document.body.removeChild(textArea);
-    
+
     return successful;
   } catch (err) {
     console.error('Fallback copy falló:', err);
