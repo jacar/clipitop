@@ -176,8 +176,25 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
 
   return (
     <div
-      className={`min-h-screen py-8 px-4 ${currentTheme.type === 'gradient' ? `bg-gradient-to-br ${currentTheme.value}` : ''}`}
-      style={currentTheme.type !== 'gradient' ? { background: currentTheme.value } : undefined}
+      className={`min-h-screen py-8 px-4 ${!profile.background_image_url && currentTheme.type === 'gradient' ? `bg-gradient-to-br ${currentTheme.value}` : ''}`}
+      style={{
+        backgroundImage: profile.background_image_url
+          ? `url(${profile.background_image_url})`
+          : currentTheme.type !== 'gradient'
+            ? currentTheme.value
+            : undefined,
+        backgroundSize: profile.background_image_url
+          ? typeof profile.theme !== 'string' && profile.theme.backgroundSize
+            ? profile.theme.backgroundSize
+            : 'cover'
+          : undefined,
+        backgroundPosition: profile.background_image_url ? 'center' : undefined,
+        backgroundRepeat: profile.background_image_url
+          ? typeof profile.theme !== 'string' && profile.theme.backgroundRepeat
+            ? profile.theme.backgroundRepeat
+            : 'no-repeat'
+          : undefined,
+      }}
     >
       <div className="max-w-2xl mx-auto">
         {/* Header con botón de volver */}
