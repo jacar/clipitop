@@ -18,6 +18,7 @@ interface Theme {
   value: string;
   backgroundRepeat?: 'repeat' | 'no-repeat' | 'repeat-x' | 'repeat-y' | 'round' | 'space';
   backgroundSize?: 'auto' | 'cover' | 'contain' | 'initial' | 'inherit' | string;
+  buttonColor?: string;
 }
 
 interface GalleryImage {
@@ -130,7 +131,9 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
     { id: 'honeycomb', name: 'Panal', type: 'texture', value: 'repeating-conic-gradient(#f0f0f0 0% 25%, #e0e0e0 0% 50%) 0 0 / 20px 20px' }
   ];
 
-  const currentTheme = themes.find(t => t.id === profile?.theme) || themes[0];
+  const currentTheme = (typeof profile?.theme === 'string'
+    ? themes.find(t => t.id === profile.theme)
+    : profile?.theme) || themes[0];
 
   if (loading) {
     return (
@@ -274,12 +277,11 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
                 {profile.links.map((link: any, index: number) => {
                   // Determine background style
                   let bgStyle = {};
-                  let textColorClass = '';
+                  const globalButtonColor = (currentTheme as any).buttonColor;
+                  const activeBtnColor = link.button_color || globalButtonColor;
 
-                  if (link.button_color) {
-                    bgStyle = { backgroundColor: link.button_color };
-                    // If custom color, text color should be respected or default to black/white depending on preference, 
-                    // but here we use link.text_color if available
+                  if (activeBtnColor) {
+                    bgStyle = { backgroundColor: activeBtnColor };
                   } else if (index === 0) {
                     if (currentTheme.type === 'image') {
                       bgStyle = {
@@ -297,7 +299,7 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
                     bgStyle = {}; // Default class handling
                   }
 
-                  const buttonClass = link.button_color
+                  const buttonClass = activeBtnColor
                     ? `w-full rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group`
                     : index === 0
                       ? `w-full rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group ${currentTheme.type === 'image' || currentTheme.type === 'gradient' ? 'text-white' : ''}`
@@ -310,7 +312,7 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
                       className={buttonClass}
                       style={{
                         ...bgStyle,
-                        color: link.text_color ? link.text_color : (index === 0 && !link.button_color ? 'white' : undefined)
+                        color: link.text_color ? link.text_color : (index === 0 && !activeBtnColor ? 'white' : undefined)
                       }}
                     >
                       <span className="flex-1 text-center" style={link.text_color ? { color: link.text_color } : {}}>{link.title}</span>

@@ -66,6 +66,7 @@ interface EditorPreviewProps {
     whatsappMessage: string;
     whatsappPosition: string;
     whatsappColor: string;
+    globalButtonColor: string; // New prop
 }
 
 const EditorPreviewString = ({
@@ -91,7 +92,8 @@ const EditorPreviewString = ({
     whatsappNumber,
     whatsappMessage,
     whatsappPosition,
-    whatsappColor
+    whatsappColor,
+    globalButtonColor // New prop
 }: EditorPreviewProps) => {
     return (
         <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm">
@@ -210,7 +212,7 @@ const EditorPreviewString = ({
                                     className="block w-full py-3 px-4 bg-white rounded-full text-center shadow-md hover:scale-105 transition break-words"
                                     style={{
                                         color: link.text_color || linkColor,
-                                        backgroundColor: link.button_color || '#ffffff'
+                                        backgroundColor: link.button_color || globalButtonColor
                                     }}
                                 >
                                     {link.title}

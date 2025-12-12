@@ -99,6 +99,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingBackgroundImage, setUploadingBackgroundImage] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [globalButtonColor, setGlobalButtonColor] = useState('#ffffff'); // Default button color
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [facebookUrl, setFacebookUrl] = useState('');
@@ -284,6 +285,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
           setTheme(profile.theme || 'purple');
           setBackgroundSize(profile.theme.backgroundSize || 'cover');
           setBackgroundRepeat(profile.theme.backgroundRepeat || 'no-repeat');
+          setGlobalButtonColor(profile.theme.buttonColor || '#ffffff');
         }
 
         setYoutubeUrl(profile.youtube_url || '');
@@ -950,6 +952,26 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
               </div>
             </div>
 
+            {/* Sección de Color de Fondo de Botones */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h2 className="text-xl mb-4 flex items-center gap-2">
+                <Palette size={20} />
+                Color de Fondo de Botones
+              </h2>
+              <div>
+                <label htmlFor="buttonColor" className="block text-sm font-medium text-gray-700 mb-2">
+                  Seleccionar Color
+                </label>
+                <input
+                  type="color"
+                  id="buttonColor"
+                  className="w-full h-10 rounded-md border border-gray-300 cursor-pointer"
+                  value={globalButtonColor}
+                  onChange={(e) => setGlobalButtonColor(e.target.value)}
+                />
+              </div>
+            </div>
+
             {/* WhatsApp Floating Button Section */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="text-xl mb-4 flex items-center gap-2">
@@ -1467,6 +1489,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
               whatsappMessage={whatsappMessage}
               whatsappPosition={whatsappPosition}
               whatsappColor={whatsappColor}
+              globalButtonColor={globalButtonColor}
             />
           </div>
           {/* Analytics Modal */}
