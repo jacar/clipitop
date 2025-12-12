@@ -539,6 +539,24 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
     ));
   };
 
+  const moveLink = (id: string, direction: 'up' | 'down') => {
+    const index = links.findIndex(l => l.id === id);
+    if (index === -1) return;
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === links.length - 1) return;
+
+    const newLinks = [...links];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+    // Swap
+    [newLinks[index], newLinks[targetIndex]] = [newLinks[targetIndex], newLinks[index]];
+
+    // Update positions explicitly if needed (though order in array is usually enough for UI, DB sync might need positions)
+    const updatedLinks = newLinks.map((link, idx) => ({ ...link, position: idx }));
+
+    setLinks(updatedLinks);
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -1084,7 +1102,24 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                 {links.map((link) => (
                   <div key={link.id} className="p-3 bg-gray-50 rounded-lg space-y-2 border border-gray-100">
                     <div className="flex items-center gap-2">
-                      <GripVertical size={18} className="text-gray-400" />
+                      <div className="flex flex-col gap-1">
+                        <button
+                          onClick={() => moveLink(link.id, 'up')}
+                          disabled={links.indexOf(link) === 0}
+                          className="text-gray-400 hover:text-purple-600 disabled:opacity-30 disabled:hover:text-gray-400"
+                          title="Mover arriba"
+                        >
+                          <ChevronUp size={16} />
+                        </button>
+                        <button
+                          onClick={() => moveLink(link.id, 'down')}
+                          disabled={links.indexOf(link) === links.length - 1}
+                          className="text-gray-400 hover:text-purple-600 disabled:opacity-30 disabled:hover:text-gray-400"
+                          title="Mover abajo"
+                        >
+                          <ChevronDown size={16} />
+                        </button>
+                      </div>
                       <div className="flex-1 space-y-2">
                         <input
                           type="text"
