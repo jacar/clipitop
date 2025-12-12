@@ -355,7 +355,16 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
         </div>
 
         {/* Footer */}
-
+        <footer className="mt-8 pb-24 text-center">
+          <a
+            href="https://clipli.top"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full shadow-sm text-xs font-medium text-gray-800 hover:bg-white transition-colors"
+          >
+            Creado con clipli.top
+          </a>
+        </footer>
       </div>
       {/* WhatsApp Floating Button */}
       {

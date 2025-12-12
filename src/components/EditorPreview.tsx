@@ -286,6 +286,18 @@ const EditorPreviewString = ({
                     </div>
                 )}
             </div>
+
+            {/* Footer Credit */}
+            <div className="mt-8 pb-20 text-center relative z-10">
+                <a
+                    href="https://clipli.top"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full shadow-sm text-xs font-medium text-gray-800 hover:bg-white transition-colors pointer-events-auto"
+                >
+                    Creado con clipli.top
+                </a>
+            </div>
         </div>
     );
 };
