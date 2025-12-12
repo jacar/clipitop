@@ -132,7 +132,7 @@ const EditorPreviewString = ({
                     style={{
                         backgroundImage: backgroundImageUrl
                             ? `url(${backgroundImageUrl})`
-                            : (typeof theme === 'string' && currentTheme ? currentTheme.value : undefined),
+                            : (currentTheme ? currentTheme.value : undefined),
                         backgroundSize: backgroundImageUrl
                             ? backgroundSize
                             : (currentTheme?.backgroundSize || 'cover'),

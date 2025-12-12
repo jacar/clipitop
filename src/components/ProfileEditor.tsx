@@ -40,6 +40,8 @@ import {
   Smile,
   Store,
   Heart,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import { Footer } from './Footer';
 import { EditorPreview } from './EditorPreview';
@@ -643,6 +645,21 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
     setGalleryImages(galleryImages.map(image =>
       image.id === id ? { ...image, link } : image
     ));
+  };
+
+  const moveGalleryImage = (id: string, direction: 'up' | 'down') => {
+    const index = galleryImages.findIndex(img => img.id === id);
+    if (index === -1) return;
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === galleryImages.length - 1) return;
+
+    const newImages = [...galleryImages];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+    // Swap
+    [newImages[index], newImages[targetIndex]] = [newImages[targetIndex], newImages[index]];
+
+    setGalleryImages(newImages);
   };
 
   const handleShare = () => {
@@ -1334,6 +1351,27 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                           <Camera size={14} />
                         </button>
                       </div>
+
+
+                      <div className="flex flex-col justify-center gap-1 mr-2">
+                        <button
+                          onClick={() => moveGalleryImage(image.id, 'up')}
+                          disabled={galleryImages.indexOf(image) === 0}
+                          className="p-1 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded transition disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400"
+                          title="Mover arriba"
+                        >
+                          <ChevronUp size={18} />
+                        </button>
+                        <button
+                          onClick={() => moveGalleryImage(image.id, 'down')}
+                          disabled={galleryImages.indexOf(image) === galleryImages.length - 1}
+                          className="p-1 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded transition disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400"
+                          title="Mover abajo"
+                        >
+                          <ChevronDown size={18} />
+                        </button>
+                      </div>
+
                       <div className="flex-1 space-y-2">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1467,8 +1505,8 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             )
           }
         </div>
-      </div>
+      </div >
       <Footer />
-    </div>
+    </div >
   );
 }
