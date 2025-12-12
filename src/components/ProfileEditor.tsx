@@ -1425,7 +1425,8 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                         />
                         <button
                           onClick={() => removeGalleryImage(image.id)}
-                          className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition"
+                          className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full shadow-sm hover:scale-110 transition"
+                          title="Eliminar imagen"
                         >
                           <X size={14} />
                         </button>
