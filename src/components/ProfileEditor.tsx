@@ -229,6 +229,34 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
     return () => clearTimeout(timeout);
   }, [username, profileId]);
 
+  // Auto-save draft to localStorage
+  useEffect(() => {
+    if (!user) return;
+    const draft = {
+      username, displayName, bio, profileImage, backgroundImageUrl, theme,
+      youtubeUrl, facebookUrl, websiteUrl, emailUrl, textColor, linkColor,
+      whatsappActive, whatsappNumber, whatsappMessage, whatsappPosition, whatsappColor,
+      links, socials, galleryImages,
+      backgroundSize, backgroundRepeat,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(`biolink_draft_${user.id}`, JSON.stringify(draft));
+  }, [
+    username, displayName, bio, profileImage, backgroundImageUrl, theme,
+    youtubeUrl, facebookUrl, websiteUrl, emailUrl, textColor, linkColor,
+    whatsappActive, whatsappNumber, whatsappMessage, whatsappPosition, whatsappColor,
+    links, socials, galleryImages,
+    backgroundSize, backgroundRepeat,
+    user
+  ]);
+
+  // Restore draft if exists and newer/relevant? 
+  // For now, let's just make sure it's saved so if they accidentally reload, we can restore it.
+  // We need to modify loadProfile to check for this?
+  // Or add a "Restore Draft" button? 
+  // Let's modify loadProfile to check if we are creating a *new* profile but have a draft.
+
+
   const loadProfile = async () => {
     if (!user) return;
 
@@ -316,11 +344,49 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
           setGalleryImages(galleryData);
         }
       } else {
-        // Perfil nuevo - usar email como username por defecto
-        const defaultUsername = user.email?.split('@')[0] || 'usuario';
-        setUsername(defaultUsername);
-        setDisplayName('Mi Nombre');
-        setBio('Creador de contenido');
+        // Check for local draft first
+        const savedDraft = localStorage.getItem(`biolink_draft_${user.id}`);
+        if (savedDraft) {
+          try {
+            const draft = JSON.parse(savedDraft);
+            // Optional: Check if draft is "recent" or ask user? For now just load it to prevent data loss.
+            setUsername(draft.username || '');
+            setDisplayName(draft.displayName || '');
+            setBio(draft.bio || '');
+            setProfileImage(draft.profileImage || profileImage);
+            setBackgroundImageUrl(draft.backgroundImageUrl || null);
+            setTheme(draft.theme || 'purple');
+            setBackgroundSize(draft.backgroundSize || 'cover');
+            setBackgroundRepeat(draft.backgroundRepeat || 'no-repeat');
+            setYoutubeUrl(draft.youtubeUrl || '');
+            setFacebookUrl(draft.facebookUrl || '');
+            setWebsiteUrl(draft.websiteUrl || '');
+            setEmailUrl(draft.emailUrl || '');
+            setTextColor(draft.textColor || '#FFFFFF');
+            setLinkColor(draft.linkColor || '#FFFFFF');
+            setWhatsappActive(draft.whatsappActive || false);
+            setWhatsappNumber(draft.whatsappNumber || '');
+            setWhatsappMessage(draft.whatsappMessage || '');
+            setWhatsappPosition(draft.whatsappPosition || 'right');
+            setWhatsappColor(draft.whatsappColor || '#25D366');
+            setLinks(draft.links || []);
+            setSocials(draft.socials || {});
+            setGalleryImages(draft.galleryImages || []);
+          } catch (e) {
+            console.error('Error loading draft', e);
+            // Fallback to default
+            const defaultUsername = user.email?.split('@')[0] || 'usuario';
+            setUsername(defaultUsername);
+            setDisplayName('Mi Nombre');
+            setBio('Creador de contenido');
+          }
+        } else {
+          // Perfil nuevo - usar email como username por defecto
+          const defaultUsername = user.email?.split('@')[0] || 'usuario';
+          setUsername(defaultUsername);
+          setDisplayName('Mi Nombre');
+          setBio('Creador de contenido');
+        }
       }
     } catch (error) {
       console.error('Error cargando perfil:', error);
@@ -378,7 +444,9 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             bio,
             profile_image: profileImage,
             background_image_url: backgroundImageUrl,
-            theme: typeof theme === 'string' ? theme : { ...theme, backgroundSize, backgroundRepeat },
+            theme: typeof theme === 'string'
+              ? { ...(themes.find(t => t.id === theme) || themes[0]), backgroundSize, backgroundRepeat }
+              : { ...theme, backgroundSize, backgroundRepeat },
             youtube_url: youtubeUrl,
             facebook_url: facebookUrl,
             website_url: websiteUrl,
