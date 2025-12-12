@@ -3,6 +3,10 @@ export interface BiolinkLink {
     title: string
     url: string
     icon?: string
+    icon_key?: string
+    icon_color?: string
+    button_color?: string
+    text_color?: string
     enabled: boolean
 }
 

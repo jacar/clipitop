@@ -1,5 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Instagram, Twitter, Youtube, Facebook, Linkedin, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Instagram, Twitter, Youtube, Facebook, Linkedin, ExternalLink, ArrowLeft, Globe, Mail, MessageCircle, Phone, Music, MapPin, Smile, Store, Heart, Palette, X } from 'lucide-react';
+
+const ICON_MAP: { [key: string]: any } = {
+  'instagram': Instagram,
+  'twitter': Twitter,
+  'facebook': Facebook,
+  'youtube': Youtube,
+  'linkedin': Linkedin,
+  'globe': Globe,
+  'mail': Mail,
+  'message-circle': MessageCircle,
+  'phone': Phone,
+  'music': Music,
+  'map-pin': MapPin,
+  'behance': Palette,
+  'store': Store,
+  'heart': Heart,
+  'smile': Smile
+};
 
 import { supabase, TABLES } from '../lib/supabase';
 import { ImageWithFallback } from './figma/ImageWithFallback';
@@ -175,28 +193,8 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
   }, {});
 
   return (
-    <div
-      className={`min-h-screen py-8 px-4 ${!profile.background_image_url && currentTheme.type === 'gradient' ? `bg-gradient-to-br ${currentTheme.value}` : ''}`}
-      style={{
-        backgroundImage: profile.background_image_url
-          ? `url(${profile.background_image_url})`
-          : currentTheme.type !== 'gradient'
-            ? currentTheme.value
-            : undefined,
-        backgroundSize: profile.background_image_url
-          ? typeof profile.theme !== 'string' && profile.theme.backgroundSize
-            ? profile.theme.backgroundSize
-            : 'cover'
-          : undefined,
-        backgroundPosition: profile.background_image_url ? 'center' : undefined,
-        backgroundRepeat: profile.background_image_url
-          ? typeof profile.theme !== 'string' && profile.theme.backgroundRepeat
-            ? profile.theme.backgroundRepeat
-            : 'no-repeat'
-          : undefined,
-      }}
-    >
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen py-8 px-4 flex flex-col items-center bg-gray-50">
+      <div className="w-full max-w-2xl">
         {/* Header con botón de volver */}
         <div className="mb-6">
           <button
@@ -209,27 +207,31 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
         </div>
 
         {/* Profile Card */}
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-          {/* Header con gradiente o imagen */}
-          <div
-            className="h-32 bg-cover bg-center"
-            style={
-              profile.background_image_url
-                ? {
-                  backgroundImage: `url(${profile.background_image_url})`,
-                  backgroundSize: typeof profile.theme !== 'string' && profile.theme.backgroundSize ? profile.theme.backgroundSize : 'cover',
-                  backgroundRepeat: typeof profile.theme !== 'string' && profile.theme.backgroundRepeat ? profile.theme.backgroundRepeat : 'no-repeat'
-                }
-                : currentTheme.type === 'image'
-                  ? { backgroundImage: `url(${currentTheme.value})`, backgroundRepeat: currentTheme.backgroundRepeat || 'no-repeat', backgroundSize: currentTheme.backgroundSize || 'contain' }
-                  : currentTheme.type === 'texture'
-                    ? { backgroundImage: currentTheme.value }
-                    : { backgroundImage: `linear-gradient(to right, ${currentTheme.value.replace('from-', '').replace('to-', '')})` }
-            }
-          ></div>
+        <div
+          className={`w-full rounded-3xl shadow-xl overflow-hidden relative min-h-[500px] ${!profile.background_image_url && currentTheme.type === 'gradient' ? `bg-gradient-to-br ${currentTheme.value}` : ''}`}
+          style={{
+            backgroundImage: profile.background_image_url
+              ? `url(${profile.background_image_url})`
+              : currentTheme.type !== 'gradient'
+                ? currentTheme.value
+                : undefined,
+            backgroundSize: profile.background_image_url
+              ? typeof profile.theme !== 'string' && profile.theme.backgroundSize
+                ? profile.theme.backgroundSize
+                : 'cover'
+              : currentTheme?.backgroundSize || 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: profile.background_image_url
+              ? typeof profile.theme !== 'string' && profile.theme.backgroundRepeat
+                ? profile.theme.backgroundRepeat
+                : 'no-repeat'
+              : currentTheme?.backgroundRepeat || 'no-repeat',
+            backgroundColor: !profile.background_image_url && (!currentTheme || currentTheme.type !== 'gradient') ? '#ffffff' : undefined,
+          }}
+        >
 
           {/* Profile Content */}
-          <div className="px-6 sm:px-8 pb-8 -mt-16 relative">
+          <div className="px-6 sm:px-8 py-12 relative z-10">
             <div className="flex flex-col items-center">
               {/* Profile Image */}
               <ImageWithFallback
@@ -239,10 +241,25 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
               />
 
               {/* Name and Bio */}
-              <h1 className="text-3xl mb-1 text-center">{profile.display_name}</h1>
-              <p className="text-gray-600 mb-2 text-center">@{profile.username}</p>
+              <h1
+                className="text-3xl mb-1 text-center font-bold"
+                style={{ color: profile.text_color || '#000000' }}
+              >
+                {profile.display_name}
+              </h1>
+              <p
+                className="mb-2 text-center"
+                style={{ color: profile.text_color || '#666666' }}
+              >
+                @{profile.username}
+              </p>
               {profile.bio && (
-                <p className="text-gray-600 text-center max-w-md mb-6">{profile.bio}</p>
+                <p
+                  className="text-center max-w-md mb-6"
+                  style={{ color: profile.text_color || '#666666' }}
+                >
+                  {profile.bio}
+                </p>
               )}
 
               {/* Social Links */}
@@ -319,11 +336,13 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
                     bgStyle = {}; // Default class handling
                   }
 
+                  const Icon = link.icon_key ? ICON_MAP[link.icon_key] : null;
+
                   const buttonClass = activeBtnColor
-                    ? `w-full rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group`
+                    ? `w-full rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group relative`
                     : index === 0
-                      ? `w-full rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group ${currentTheme.type === 'image' || currentTheme.type === 'gradient' ? 'text-white' : ''}`
-                      : `w-full bg-gray-50 hover:bg-gray-100 rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group`;
+                      ? `w-full rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group relative ${currentTheme.type === 'image' || currentTheme.type === 'gradient' ? 'text-white' : ''}`
+                      : `w-full bg-gray-50 hover:bg-gray-100 rounded-2xl p-5 text-center transition hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-between group relative`;
 
                   return (
                     <button
@@ -332,14 +351,20 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
                       className={buttonClass}
                       style={{
                         ...bgStyle,
-                        color: link.text_color ? link.text_color : (index === 0 && !activeBtnColor ? 'white' : undefined)
+                        color: link.text_color || profile.link_color || (index === 0 && !activeBtnColor ? 'white' : undefined)
                       }}
                     >
-                      <span className="flex-1 text-center" style={link.text_color ? { color: link.text_color } : {}}>{link.title}</span>
+                      {Icon && (
+                        <Icon
+                          size={20}
+                          className="absolute left-4"
+                          style={{ color: link.icon_color || 'inherit' }}
+                        />
+                      )}
+                      <span className="flex-1 text-center">{link.title}</span>
                       <ExternalLink
                         size={18}
                         className="opacity-0 group-hover:opacity-100 transition"
-                        style={link.text_color ? { color: link.text_color } : {}}
                       />
                     </button>
                   )

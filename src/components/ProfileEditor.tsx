@@ -32,7 +32,14 @@ import {
   Download,
   Copy,
   Palette,
-  Linkedin
+  Linkedin,
+  MessageCircle,
+  Phone,
+  Music,
+  MapPin,
+  Smile,
+  Store,
+  Heart,
 } from 'lucide-react';
 import { Footer } from './Footer';
 import { EditorPreview } from './EditorPreview';
@@ -52,7 +59,27 @@ interface Link {
   position: number;
   button_color?: string;
   text_color?: string;
+  icon_key?: string;
+  icon_color?: string;
 }
+
+const ICON_OPTIONS = [
+  { key: 'instagram', label: 'Instagram', icon: Instagram },
+  { key: 'twitter', label: 'X / Twitter', icon: Twitter },
+  { key: 'facebook', label: 'Facebook', icon: Facebook },
+  { key: 'youtube', label: 'YouTube', icon: Youtube },
+  { key: 'linkedin', label: 'LinkedIn', icon: Linkedin },
+  { key: 'globe', label: 'Web', icon: Globe },
+  { key: 'mail', label: 'Mail', icon: Mail },
+  { key: 'message-circle', label: 'WhatsApp', icon: MessageCircle },
+  { key: 'phone', label: 'Teléfono', icon: Phone },
+  { key: 'music', label: 'Música', icon: Music },
+  { key: 'map-pin', label: 'Ubicación', icon: MapPin },
+  { key: 'behance', label: 'Behance', icon: Palette }, // Using Palette as proxy
+  { key: 'store', label: 'Tienda', icon: Store },
+  { key: 'heart', label: 'Favorito', icon: Heart },
+  { key: 'smile', label: 'Smile', icon: Smile },
+];
 
 interface Theme {
   id: string;
@@ -84,13 +111,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
   const [backgroundRepeat, setBackgroundRepeat] = useState<'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y'>('no-repeat');
   const [profileId, setProfileId] = useState<string | null>(null);
   const [links, setLinks] = useState<Link[]>([]);
-  const [socials, setSocials] = useState({
-    instagram: '',
-    twitter: '',
-    youtube: '',
-    facebook: '',
-    linkedin: '',
-  });
+
   const [theme, setTheme] = useState<Theme | string>('purple');
   const [showPreview, setShowPreview] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -101,23 +122,23 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [globalButtonColor, setGlobalButtonColor] = useState('#ffffff'); // Default button color
   const [checkingUsername, setCheckingUsername] = useState(false);
-  const [youtubeUrl, setYoutubeUrl] = useState('');
-  const [facebookUrl, setFacebookUrl] = useState('');
-  const [websiteUrl, setWebsiteUrl] = useState('');
-  const [emailUrl, setEmailUrl] = useState('');
+
   const [textColor, setTextColor] = useState('#FFFFFF'); // Default to white text
   const [linkColor, setLinkColor] = useState('#FFFFFF'); // Default to white link color
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [uploadingGalleryImage, setUploadingGalleryImage] = useState(false);
-  /* New state for Share Modal */
-  const [showShareModal, setShowShareModal] = useState(false);
 
-  /* New state for WhatsApp Feature */
+  // WhatsApp Floating Button State
   const [whatsappActive, setWhatsappActive] = useState(false);
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [whatsappMessage, setWhatsappMessage] = useState('');
-  const [whatsappPosition, setWhatsappPosition] = useState('right');
+  const [whatsappPosition, setWhatsappPosition] = useState<'left' | 'right'>('right');
   const [whatsappColor, setWhatsappColor] = useState('#25D366');
+
+  /* New state for Share Modal */
+  const [showShareModal, setShowShareModal] = useState(false);
+
+
 
 
   const themes: Theme[] = [
@@ -184,8 +205,8 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
         setBio(template.description);
         setTheme(template.theme);
         if (template.theme.type === 'image') {
-          setBackgroundSize(template.theme.backgroundSize || 'contain');
-          setBackgroundRepeat(template.theme.backgroundRepeat || 'no-repeat');
+          setBackgroundSize((template.theme.backgroundSize as any) || 'contain');
+          setBackgroundRepeat((template.theme.backgroundRepeat as any) || 'no-repeat');
         }
         setLinks(template.defaultLinks.map((link, index) => ({
           id: Date.now().toString() + index,
@@ -193,7 +214,6 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
           url: link.url,
           position: index,
         })));
-        setSocials(template.defaultSocials);
       }
     }
   }, [selectedTemplate, profileId]);
@@ -235,18 +255,18 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
     if (!user) return;
     const draft = {
       username, displayName, bio, profileImage, backgroundImageUrl, theme,
-      youtubeUrl, facebookUrl, websiteUrl, emailUrl, textColor, linkColor,
+      textColor, linkColor,
       whatsappActive, whatsappNumber, whatsappMessage, whatsappPosition, whatsappColor,
-      links, socials, galleryImages,
+      links, galleryImages,
       backgroundSize, backgroundRepeat,
       timestamp: Date.now()
     };
     localStorage.setItem(`biolink_draft_${user.id}`, JSON.stringify(draft));
   }, [
     username, displayName, bio, profileImage, backgroundImageUrl, theme,
-    youtubeUrl, facebookUrl, websiteUrl, emailUrl, textColor, linkColor,
+    textColor, linkColor,
     whatsappActive, whatsappNumber, whatsappMessage, whatsappPosition, whatsappColor,
-    links, socials, galleryImages,
+    links, galleryImages,
     backgroundSize, backgroundRepeat,
     user
   ]);
@@ -288,12 +308,6 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
           setGlobalButtonColor(profile.theme.buttonColor || '#ffffff');
         }
 
-        setYoutubeUrl(profile.youtube_url || '');
-        setFacebookUrl(profile.facebook_url || '');
-        setWebsiteUrl(profile.website_url || '');
-        setEmailUrl(profile.email_url || '');
-        setTextColor(profile.text_color || '#FFFFFF');
-        setEmailUrl(profile.email_url || '');
         setTextColor(profile.text_color || '#FFFFFF');
         setLinkColor(profile.link_color || '#FFFFFF');
 
@@ -313,26 +327,6 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
 
         if (linksData) {
           setLinks(linksData);
-        }
-
-        // Cargar redes sociales
-        const { data: socialsData } = await supabase
-          .from(TABLES.SOCIAL_LINKS)
-          .select('*')
-          .eq('profile_id', profile.id);
-
-        if (socialsData) {
-          const socialsMap: any = {};
-          socialsData.forEach(s => {
-            socialsMap[s.platform] = s.username;
-          });
-          setSocials({
-            instagram: socialsMap.instagram || '',
-            twitter: socialsMap.twitter || '',
-            youtube: socialsMap.youtube || '',
-            facebook: socialsMap.facebook || '',
-            linkedin: socialsMap.linkedin || '',
-          });
         }
 
         // Cargar galería
@@ -360,10 +354,6 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             setTheme(draft.theme || 'purple');
             setBackgroundSize(draft.backgroundSize || 'cover');
             setBackgroundRepeat(draft.backgroundRepeat || 'no-repeat');
-            setYoutubeUrl(draft.youtubeUrl || '');
-            setFacebookUrl(draft.facebookUrl || '');
-            setWebsiteUrl(draft.websiteUrl || '');
-            setEmailUrl(draft.emailUrl || '');
             setTextColor(draft.textColor || '#FFFFFF');
             setLinkColor(draft.linkColor || '#FFFFFF');
             setWhatsappActive(draft.whatsappActive || false);
@@ -372,7 +362,6 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             setWhatsappPosition(draft.whatsappPosition || 'right');
             setWhatsappColor(draft.whatsappColor || '#25D366');
             setLinks(draft.links || []);
-            setSocials(draft.socials || {});
             setGalleryImages(draft.galleryImages || []);
           } catch (e) {
             console.error('Error loading draft', e);
@@ -432,17 +421,8 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                 backgroundRepeat,
                 buttonColor: globalButtonColor,
               },
-            youtube_url: youtubeUrl,
-            facebook_url: facebookUrl,
-            website_url: websiteUrl,
-            email_url: emailUrl,
             text_color: textColor,
             link_color: linkColor,
-            whatsapp_active: whatsappActive,
-            whatsapp_number: whatsappNumber,
-            whatsapp_message: whatsappMessage,
-            whatsapp_position: whatsappPosition,
-            whatsapp_color: whatsappColor,
           })
           .eq('id', profileId);
 
@@ -461,17 +441,8 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             theme: typeof theme === 'string'
               ? { ...(themes.find(t => t.id === theme) || themes[0]), backgroundSize, backgroundRepeat }
               : { ...theme, backgroundSize, backgroundRepeat },
-            youtube_url: youtubeUrl,
-            facebook_url: facebookUrl,
-            website_url: websiteUrl,
-            email_url: emailUrl,
             text_color: textColor,
             link_color: linkColor,
-            whatsapp_active: whatsappActive,
-            whatsapp_number: whatsappNumber,
-            whatsapp_message: whatsappMessage,
-            whatsapp_position: whatsappPosition,
-            whatsapp_color: whatsappColor,
           })
           .select()
           .single();
@@ -497,7 +468,9 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             url: link.url,
             position: index,
             button_color: link.button_color,
-            text_color: link.text_color
+            text_color: link.text_color,
+            icon_key: link.icon_key,
+            icon_color: link.icon_color
           }));
 
           const { error: linksError } = await supabase
@@ -507,32 +480,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
           if (linksError) throw linksError;
         }
 
-        // Guardar redes sociales
-        await supabase
-          .from(TABLES.SOCIAL_LINKS)
-          .delete()
-          .eq('profile_id', currentProfileId);
 
-        const socialLinksToInsert = [
-          ...Object.entries(socials)
-            .filter(([_, value]) => value.trim())
-            .map(([platform, username]) => ({
-              profile_id: currentProfileId,
-              platform,
-              username,
-            })),
-          ...(youtubeUrl ? [{ profile_id: currentProfileId, platform: 'youtube', username: youtubeUrl }] : []),
-          ...(facebookUrl ? [{ profile_id: currentProfileId, platform: 'facebook', username: facebookUrl }] : []),
-          // Website and Email are usually not considered "socials" for the icon bar in the same way, 
-          // but if the user expects them, we should add them if the UI supports them. 
-          // Looking at PublicProfile, it has icons for: instagram, twitter, youtube, facebook, linkedin.
-          // It DOES NOT have icons for website or email in the social bar section.
-          // So I will only add Youtube and Facebook here as they were the ones missing from 'socials' object but present in separate state.
-        ];
-
-        if (socialLinksToInsert.length > 0) {
-          await supabase.from(TABLES.SOCIAL_LINKS).insert(socialLinksToInsert);
-        }
 
         // Guardar galería
         await supabase
@@ -596,7 +544,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
     setUploadingImage(true);
     try {
       const imageUrl = await uploadProfileImage(file, user.id);
-      setProfileImage(imageUrl);
+      setProfileImage(imageUrl || profileImage);
     } catch (error) {
       console.error('Error subiendo imagen de perfil:', error);
       alert('Error al subir la imagen de perfil');
@@ -634,7 +582,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
       setGalleryImages([...galleryImages, {
         id: Date.now().toString(),
         profile_id: profileId || '',
-        image_url: imageUrl,
+        image_url: imageUrl || '',
         position: galleryImages.length,
         created_at: new Date().toISOString()
       }]);
@@ -663,7 +611,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
     try {
       const imageUrl = await uploadGalleryImage(file, user.id);
       setGalleryImages(galleryImages.map(img =>
-        img.id === replacingImageId ? { ...img, image_url: imageUrl } : img
+        img.id === replacingImageId ? { ...img, image_url: imageUrl || '' } : img
       ));
     } catch (error) {
       console.error('Error reemplazando imagen:', error);
@@ -1012,108 +960,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
               </div>
             </div>
 
-            {/* WhatsApp Floating Button Section */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-xl mb-4 flex items-center gap-2">
-                <span className="text-green-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" /></svg>
-                </span>
-                WhatsApp Flotante
-              </h2>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-100">
-                  <div className="flex flex-col">
-                    <span className="text-gray-900 font-semibold text-sm">Activar botón flotante</span>
-                    <span className="text-gray-500 text-xs">Muestra el botón de WhatsApp en tu perfil</span>
-                  </div>
-                  <button
-                    onClick={() => setWhatsappActive(!whatsappActive)}
-                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${whatsappActive ? 'bg-green-500' : 'bg-gray-200'}`}
-                  >
-                    <span
-                      className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${whatsappActive ? 'translate-x-[1.35rem]' : 'translate-x-0.5'}`}
-                    />
-                  </button>
-                </div>
-
-                {whatsappActive && (
-                  <div className="space-y-4 pt-2 animate-in fade-in slide-in-from-top-2">
-                    <div>
-                      <label htmlFor="whatsappNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                        Número de WhatsApp (con código de país)
-                      </label>
-                      <input
-                        type="text"
-                        id="whatsappNumber"
-                        className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                        placeholder="Ej: 573001234567"
-                        value={whatsappNumber}
-                        onChange={(e) => setWhatsappNumber(e.target.value)}
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Sin símbolos ni espacios, solo números.</p>
-                    </div>
-
-                    <div>
-                      <label htmlFor="whatsappMessage" className="block text-sm font-medium text-gray-700 mb-1">
-                        Mensaje predeterminado (Opcional)
-                      </label>
-                      <textarea
-                        id="whatsappMessage"
-                        rows={2}
-                        className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                        placeholder="Hola, me gustaría más información..."
-                        value={whatsappMessage}
-                        onChange={(e) => setWhatsappMessage(e.target.value)}
-                      ></textarea>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Color del botón
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="color"
-                          value={whatsappColor}
-                          onChange={(e) => setWhatsappColor(e.target.value)}
-                          className="h-10 w-20 rounded border border-gray-300 cursor-pointer p-0"
-                        />
-                        <span className="text-sm text-gray-500 uppercase">{whatsappColor}</span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="block text-sm font-medium text-gray-700 mb-2">Posición del botón</span>
-                      <div className="flex gap-4">
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="whatsappPosition"
-                            value="left"
-                            checked={whatsappPosition === 'left'}
-                            onChange={(e) => setWhatsappPosition(e.target.value)}
-                            className="w-4 h-4 text-green-600 focus:ring-green-500 border-gray-300"
-                          />
-                          <span className="text-gray-700">Izquierda</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="whatsappPosition"
-                            value="right"
-                            checked={whatsappPosition === 'right' || !whatsappPosition}
-                            onChange={(e) => setWhatsappPosition(e.target.value)}
-                            className="w-4 h-4 text-green-600 focus:ring-green-500 border-gray-300"
-                          />
-                          <span className="text-gray-700">Derecha</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
 
             {/* Theme Section */}
             <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm">
@@ -1247,23 +1094,85 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                     <div className="flex items-center gap-4 pl-7 border-t border-gray-200 pt-2 mt-2">
                       <div className="flex items-center gap-2">
                         <label className="text-xs text-gray-500 font-medium">Fondo:</label>
-                        <input
-                          type="color"
-                          value={link.button_color || '#ffffff'}
-                          onChange={(e) => updateLink(link.id, 'button_color', e.target.value)}
-                          className="w-8 h-8 rounded border border-gray-300 cursor-pointer p-0"
-                          title="Color del botón"
-                        />
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="color"
+                            value={link.button_color || '#ffffff'}
+                            onChange={(e) => updateLink(link.id, 'button_color', e.target.value)}
+                            className="w-8 h-8 rounded border border-gray-300 cursor-pointer p-0"
+                            title="Color del botón"
+                          />
+                          {link.button_color && (
+                            <button
+                              onClick={() => updateLink(link.id, 'button_color', '')}
+                              className="text-gray-400 hover:text-red-500 p-1"
+                              title="Restaurar color global"
+                            >
+                              <X size={14} />
+                            </button>
+                          )}
+                        </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <label className="text-xs text-gray-500 font-medium">Texto:</label>
-                        <input
-                          type="color"
-                          value={link.text_color || '#000000'}
-                          onChange={(e) => updateLink(link.id, 'text_color', e.target.value)}
-                          className="w-8 h-8 rounded border border-gray-300 cursor-pointer p-0"
-                          title="Color del texto"
-                        />
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="color"
+                            value={link.text_color || '#000000'}
+                            onChange={(e) => updateLink(link.id, 'text_color', e.target.value)}
+                            className="w-8 h-8 rounded border border-gray-300 cursor-pointer p-0"
+                            title="Color del texto"
+                          />
+                          {link.text_color && (
+                            <button
+                              onClick={() => updateLink(link.id, 'text_color', '')}
+                              className="text-gray-400 hover:text-red-500 p-1"
+                              title="Restaurar color global"
+                            >
+                              <X size={14} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-200 pl-7">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Icono
+                        </label>
+                        <select
+                          value={link.icon_key || ''}
+                          onChange={(e) => updateLink(link.id, 'icon_key', e.target.value)}
+                          className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-sm"
+                        >
+                          <option value="">Ninguno</option>
+                          {ICON_OPTIONS.map((option) => (
+                            <option key={option.key} value={option.key}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Color Icono
+                        </label>
+                        <div className="flex gap-2 h-10">
+                          <input
+                            type="color"
+                            value={link.icon_color || '#ffffff'}
+                            onChange={(e) => updateLink(link.id, 'icon_color', e.target.value)}
+                            className="w-10 h-full rounded border border-gray-300 cursor-pointer p-0.5"
+                          />
+                          <input
+                            type="text"
+                            value={link.icon_color || ''}
+                            onChange={(e) => updateLink(link.id, 'icon_color', e.target.value)}
+                            placeholder="#ffffff"
+                            className="flex-1 border border-gray-300 rounded-md px-3 text-sm"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1271,102 +1180,28 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
               </div>
             </div>
 
-            {/* Social Links Section */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-xl mb-4">Redes Sociales</h2>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Instagram size={20} className="text-pink-600" />
-                  <input
-                    type="text"
-                    value={socials.instagram}
-                    onChange={(e) => setSocials({ ...socials, instagram: e.target.value })}
-                    className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-sm"
-                    placeholder="Usuario de Instagram"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <svg viewBox="0 0 24 24" aria-hidden="true" className="w-5 h-5 fill-black"><g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></g></svg>
-                  <input
-                    type="text"
-                    value={socials.twitter}
-                    onChange={(e) => setSocials({ ...socials, twitter: e.target.value })}
-                    className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-sm"
-                    placeholder="Usuario de X"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Youtube size={20} className="text-red-600" />
-                  <input
-                    type="url"
-                    value={youtubeUrl}
-                    onChange={(e) => setYoutubeUrl(e.target.value)}
-                    className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-sm"
-                    placeholder="URL de YouTube"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Facebook size={20} className="text-blue-600" />
-                  <input
-                    type="url"
-                    value={facebookUrl}
-                    onChange={(e) => setFacebookUrl(e.target.value)}
-                    className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-sm"
-                    placeholder="URL de Facebook"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Linkedin size={20} className="text-blue-700" />
-                  <input
-                    type="text"
-                    value={socials.linkedin}
-                    onChange={(e) => setSocials({ ...socials, linkedin: e.target.value })}
-                    className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-sm"
-                    placeholder="Usuario de LinkedIn"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Globe size={20} className="text-green-600" />
-                  <input
-                    type="url"
-                    value={websiteUrl}
-                    onChange={(e) => setWebsiteUrl(e.target.value)}
-                    className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-sm"
-                    placeholder="URL de sitio web"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail size={20} className="text-gray-600" />
-                  <input
-                    type="email"
-                    value={emailUrl}
-                    onChange={(e) => setEmailUrl(e.target.value)}
-                    className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-sm"
-                    placeholder="Correo electrónico"
-                  />
-                </div>
-              </div>
-            </div>
+
+
 
             {/* WhatsApp Floating Button Section */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl">Botón Flotante de WhatsApp</h2>
-                <div className="flex items-center">
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={whatsappActive}
-                      onChange={(e) => setWhatsappActive(e.target.checked)}
-                      className="sr-only peer"
-                    />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                  </label>
+                <h2 className="text-xl flex items-center gap-2">
+                  <MessageCircle size={20} className="text-green-500" />
+                  WhatsApp Flotante
+                </h2>
+                <div
+                  className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors ${whatsappActive ? 'bg-green-500' : 'bg-gray-300'
+                    }`}
+                  onClick={() => setWhatsappActive(!whatsappActive)}
+                >
+                  <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${whatsappActive ? 'translate-x-6' : 'translate-x-0'
+                    }`} />
                 </div>
               </div>
 
               {whatsappActive && (
-                <div className="space-y-4">
+                <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Número de WhatsApp
@@ -1375,21 +1210,22 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                       type="text"
                       value={whatsappNumber}
                       onChange={(e) => setWhatsappNumber(e.target.value)}
-                      placeholder="Ej: 5215555555555 (con código de país)"
-                      className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                      placeholder="e.g. 573001234567"
+                      className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-sm"
                     />
+                    <p className="text-xs text-gray-500 mt-1">Incluye el código de país sin símbolos (+)</p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Mensaje Predefinido
+                      Mensaje Predefinido (Opcional)
                     </label>
                     <input
                       type="text"
                       value={whatsappMessage}
                       onChange={(e) => setWhatsappMessage(e.target.value)}
-                      placeholder="Ej: Hola, quiero más información..."
-                      className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                      placeholder="¡Hola! Me gustaría más información."
+                      className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-sm"
                     />
                   </div>
 
@@ -1398,16 +1234,22 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Posición
                       </label>
-                      <div className="flex bg-gray-100 p-1 rounded-lg">
+                      <div className="flex rounded-md shadow-sm">
                         <button
                           onClick={() => setWhatsappPosition('left')}
-                          className={`flex-1 py-1 px-3 text-sm rounded-md transition ${whatsappPosition === 'left' ? 'bg-white shadow text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+                          className={`flex-1 px-4 py-2 text-sm border rounded-l-md ${whatsappPosition === 'left'
+                            ? 'bg-purple-50 text-purple-700 border-purple-500 z-10'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                            }`}
                         >
                           Izquierda
                         </button>
                         <button
                           onClick={() => setWhatsappPosition('right')}
-                          className={`flex-1 py-1 px-3 text-sm rounded-md transition ${whatsappPosition === 'right' ? 'bg-white shadow text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+                          className={`flex-1 px-4 py-2 text-sm border rounded-r-md -ml-px ${whatsappPosition === 'right'
+                            ? 'bg-purple-50 text-purple-700 border-purple-500 z-10'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                            }`}
                         >
                           Derecha
                         </button>
@@ -1418,14 +1260,20 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Color del Botón
                       </label>
-                      <div className="flex items-center gap-2">
+                      <div className="flex gap-2 h-10">
                         <input
                           type="color"
                           value={whatsappColor}
                           onChange={(e) => setWhatsappColor(e.target.value)}
-                          className="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0 overflow-hidden"
+                          className="w-10 h-full rounded border border-gray-300 cursor-pointer p-0.5"
                         />
-                        <span className="text-sm text-gray-500 uppercase">{whatsappColor}</span>
+                        <input
+                          type="text"
+                          value={whatsappColor}
+                          onChange={(e) => setWhatsappColor(e.target.value)}
+                          maxLength={7}
+                          className="flex-1 border border-gray-300 rounded-md px-3 text-sm uppercase"
+                        />
                       </div>
                     </div>
                   </div>
@@ -1532,20 +1380,15 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
               displayName={displayName}
               textColor={textColor}
               bio={bio}
-              socials={socials}
-              youtubeUrl={youtubeUrl}
-              facebookUrl={facebookUrl}
-              websiteUrl={websiteUrl}
-              emailUrl={emailUrl}
               links={links}
               linkColor={linkColor}
               galleryImages={galleryImages}
+              globalButtonColor={globalButtonColor}
               whatsappActive={whatsappActive}
               whatsappNumber={whatsappNumber}
               whatsappMessage={whatsappMessage}
               whatsappPosition={whatsappPosition}
               whatsappColor={whatsappColor}
-              globalButtonColor={globalButtonColor}
             />
           </div>
           {/* Analytics Modal */}

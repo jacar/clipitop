@@ -20,6 +20,10 @@ import {
   MapPin,
   MessageCircle,
   QrCode,
+  Store,
+  Heart,
+  Smile,
+  Palette,
 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { BiolinkQRCode } from "@/components/biolink-qr-code"
@@ -27,7 +31,7 @@ import { BiolinkService } from "@/lib/biolink-service"
 import { type BiolinkProfile } from "@/lib/types"
 import { TEMPLATES } from "@/lib/templates"
 
-const SOCIAL_ICONS: Record<string, React.ElementType> = {
+const ICON_MAP: Record<string, React.ElementType> = {
   instagram: Instagram,
   twitter: Twitter,
   youtube: Youtube,
@@ -35,10 +39,19 @@ const SOCIAL_ICONS: Record<string, React.ElementType> = {
   linkedin: Linkedin,
   tiktok: Music,
   website: Globe,
+  globe: Globe,
   email: Mail,
+  mail: Mail,
   phone: Phone,
   whatsapp: MessageCircle,
+  "message-circle": MessageCircle,
   location: MapPin,
+  "map-pin": MapPin,
+  music: Music,
+  behance: Palette, // Using Palette as proxy
+  store: Store,
+  heart: Heart,
+  smile: Smile,
 }
 
 export function PublicBiolink({ username }: { username: string }) {
@@ -192,51 +205,40 @@ export function PublicBiolink({ username }: { username: string }) {
             {biolink.bio}
           </p>
 
-          {/* Social Links */}
-          {biolink.socialLinks.filter((s) => s.enabled).length > 0 && (
-            <div className="mt-4 flex flex-wrap justify-center gap-2">
-              {biolink.socialLinks
-                .filter((s) => s.enabled)
-                .map((social) => {
-                  const Icon = SOCIAL_ICONS[social.platform] || Globe
-                  return (
-                    <a
-                      key={social.platform}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-10 w-10 items-center justify-center rounded-full transition-transform hover:scale-110"
-                      style={{ backgroundColor: `${biolink.buttonColor}20` }}
-                    >
-                      <Icon className="h-5 w-5" style={{ color: biolink.buttonColor }} />
-                    </a>
-                  )
-                })}
-            </div>
-          )}
+
         </div>
 
         {/* Links */}
         <div className="mt-8 flex flex-col gap-3">
           {biolink.links
             .filter((link) => link.enabled)
-            .map((link, index) => (
-              <a
-                key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex w-full items-center justify-center gap-2 px-6 py-3.5 text-center font-medium text-white transition-all hover:scale-[1.02] hover:shadow-lg"
-                style={{
-                  backgroundColor: biolink.buttonColor,
-                  borderRadius: buttonRadius,
-                  animationDelay: `${index * 50}ms`,
-                }}
-              >
-                <span>{link.title}</span>
-                <ExternalLink className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
-              </a>
-            ))}
+            .map((link, index) => {
+              const Icon = link.icon_key ? ICON_MAP[link.icon_key] : null
+              return (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex w-full items-center justify-center gap-2 px-6 py-3.5 text-center font-medium text-white transition-all hover:scale-[1.02] hover:shadow-lg relative"
+                  style={{
+                    backgroundColor: link.button_color || biolink.buttonColor, // Support individual color if present
+                    color: link.text_color || biolink.textColor, // Support individual color if present
+                    borderRadius: buttonRadius,
+                    animationDelay: `${index * 50}ms`,
+                  }}
+                >
+                  {Icon && (
+                    <Icon
+                      className="absolute left-4 h-5 w-5"
+                      style={{ color: link.icon_color || 'inherit' }}
+                    />
+                  )}
+                  <span>{link.title}</span>
+                  <ExternalLink className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100 absolute right-4" />
+                </a>
+              )
+            })}
         </div>
 
         {/* Footer */}

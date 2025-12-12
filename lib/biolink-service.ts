@@ -163,6 +163,10 @@ export const BiolinkService = {
             title: link.title,
             url: link.url,
             icon: link.icon,
+            icon_key: link.icon_key,
+            icon_color: link.icon_color,
+            button_color: link.button_color,
+            text_color: link.text_color,
             enabled: link.enabled,
             order: 0
         }
@@ -184,6 +188,10 @@ export const BiolinkService = {
         if (updates.title !== undefined) dbUpdates.title = updates.title
         if (updates.url !== undefined) dbUpdates.url = updates.url
         if (updates.icon !== undefined) dbUpdates.icon = updates.icon
+        if (updates.icon_key !== undefined) dbUpdates.icon_key = updates.icon_key
+        if (updates.icon_color !== undefined) dbUpdates.icon_color = updates.icon_color
+        if (updates.button_color !== undefined) dbUpdates.button_color = updates.button_color
+        if (updates.text_color !== undefined) dbUpdates.text_color = updates.text_color
         if (updates.enabled !== undefined) dbUpdates.enabled = updates.enabled
 
         const { error } = await supabase
@@ -237,6 +245,10 @@ function mapProfileFromDB(dbProfile: any): BiolinkProfile {
             title: l.title,
             url: l.url,
             icon: l.icon,
+            icon_key: l.icon_key,
+            icon_color: l.icon_color,
+            button_color: l.button_color,
+            text_color: l.text_color,
             enabled: l.enabled
         })) || [],
         socialLinks: dbProfile.socialLinks?.map((l: any) => ({
