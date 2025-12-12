@@ -635,6 +635,34 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
     }
   };
 
+  const replaceFileInputRef = useRef<HTMLInputElement>(null);
+  const [replacingImageId, setReplacingImageId] = useState<string | null>(null);
+
+  const handleReplaceClick = (id: string) => {
+    setReplacingImageId(id);
+    replaceFileInputRef.current?.click();
+  };
+
+  const handleReplaceImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !replacingImageId) return;
+
+    setUploadingGalleryImage(true);
+    try {
+      const imageUrl = await uploadGalleryImage(file, user.id);
+      setGalleryImages(galleryImages.map(img =>
+        img.id === replacingImageId ? { ...img, image_url: imageUrl } : img
+      ));
+    } catch (error) {
+      console.error('Error reemplazando imagen:', error);
+      alert('Error al reemplazar la imagen');
+    } finally {
+      setUploadingGalleryImage(false);
+      setReplacingImageId(null);
+      e.target.value = '';
+    }
+  };
+
   const removeGalleryImage = async (id: string) => {
     if (!confirm('¿Estás seguro de querer eliminar esta imagen?')) return;
 
@@ -1412,6 +1440,14 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                   className="hidden"
                   disabled={uploadingGalleryImage}
                 />
+                <input
+                  ref={replaceFileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleReplaceImageUpload}
+                  className="hidden"
+                  disabled={uploadingGalleryImage}
+                />
               </div>
               <div className="space-y-4">
                 {galleryImages.map((image) => (
@@ -1429,6 +1465,13 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                           title="Eliminar imagen"
                         >
                           <X size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleReplaceClick(image.id)}
+                          className="absolute bottom-1 right-1 p-1 bg-white text-purple-600 rounded-full shadow-sm hover:scale-110 transition border border-gray-200"
+                          title="Cambiar imagen"
+                        >
+                          <Camera size={14} />
                         </button>
                       </div>
                       <div className="flex-1 space-y-2">
