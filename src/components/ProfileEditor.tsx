@@ -419,7 +419,19 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             bio,
             profile_image: profileImage,
             background_image_url: backgroundImageUrl,
-            theme: typeof theme === 'string' ? theme : { ...theme, backgroundSize, backgroundRepeat },
+            theme: typeof theme === 'string'
+              ? {
+                ...(themes.find((t) => t.id === theme) || themes[0]),
+                backgroundSize,
+                backgroundRepeat,
+                buttonColor: globalButtonColor,
+              }
+              : {
+                ...theme,
+                backgroundSize,
+                backgroundRepeat,
+                buttonColor: globalButtonColor,
+              },
             youtube_url: youtubeUrl,
             facebook_url: facebookUrl,
             website_url: websiteUrl,

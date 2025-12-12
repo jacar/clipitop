@@ -175,7 +175,10 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
   }, {});
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-8 px-4">
+    <div
+      className={`min-h-screen py-8 px-4 ${currentTheme.type === 'gradient' ? `bg-gradient-to-br ${currentTheme.value}` : ''}`}
+      style={currentTheme.type !== 'gradient' ? { background: currentTheme.value } : undefined}
+    >
       <div className="max-w-2xl mx-auto">
         {/* Header con botón de volver */}
         <div className="mb-6">
