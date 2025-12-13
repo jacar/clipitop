@@ -1362,22 +1362,25 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
 
             {/* Gallery Section */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                 <h2 className="text-xl">Galería</h2>
-                <label
-                  htmlFor="gallery-image-upload"
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center gap-2 cursor-pointer"
-                >
-                  <Plus size={18} />
-                  Agregar Imagen
-                </label>
-                <button
-                  onClick={addVideoToGallery}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2"
-                >
-                  <Video size={18} />
-                  Agregar Video
-                </button>
+                <div className="flex gap-2 flex-wrap">
+                  <label
+                    htmlFor="gallery-image-upload"
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center gap-2 cursor-pointer"
+                  >
+                    <Plus size={18} />
+                    Agregar Imagen
+                  </label>
+                  {/* Video Upload Button */}
+                  <button
+                    onClick={addVideoToGallery}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2"
+                  >
+                    <Video size={18} />
+                    Agregar Video
+                  </button>
+                </div>
                 <input
                   id="gallery-image-upload"
                   type="file"
