@@ -662,11 +662,14 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
   };
 
   const removeGalleryImage = async (id: string) => {
-    if (!confirm('¿Estás seguro de querer eliminar esta imagen?')) return;
+    if (!confirm('¿Estás seguro de querer eliminar este elemento de la galería?')) return;
 
     const imageToDelete = galleryImages.find(image => image.id === id);
     if (imageToDelete) {
-      await deleteImage('gallery-images', imageToDelete.image_url);
+      // Only delete from storage if it's an image and has a Supabase URL
+      if (imageToDelete.type !== 'video' && imageToDelete.image_url.includes(import.meta.env.VITE_SUPABASE_URL)) {
+        await deleteImage('gallery-images', imageToDelete.image_url);
+      }
     }
     setGalleryImages(galleryImages.filter(image => image.id !== id));
   };
@@ -1445,6 +1448,13 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                           title="Mover abajo"
                         >
                           <ChevronDown size={18} />
+                        </button>
+                        <button
+                          onClick={() => removeGalleryImage(image.id)}
+                          className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition"
+                          title="Eliminar elemento"
+                        >
+                          <Trash2 size={18} />
                         </button>
                       </div>
 
