@@ -42,6 +42,7 @@ import {
   Heart,
   ChevronUp,
   ChevronDown,
+  Video,
 } from 'lucide-react';
 import { Footer } from './Footer';
 import { EditorPreview } from './EditorPreview';
@@ -95,10 +96,11 @@ interface Theme {
 interface GalleryImage {
   id: string;
   profile_id: string;
-  image_url: string;
+  image_url: string; // Used for Video URL too
   position: number;
   description?: string;
   link?: string;
+  type?: 'image' | 'video';
   created_at: string;
 }
 
@@ -496,6 +498,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             image_url: image.image_url,
             position: index,
             description: image.description,
+            type: image.type || 'image',
           }));
 
           await supabase.from(TABLES.GALLERY_IMAGES).insert(galleryToInsert);
@@ -604,6 +607,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
         profile_id: profileId || '',
         image_url: imageUrl || '',
         position: galleryImages.length,
+        type: 'image',
         created_at: new Date().toISOString()
       }]);
     } catch (error) {
@@ -613,6 +617,20 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
       setUploadingGalleryImage(false);
       e.target.value = '';
     }
+  };
+
+  const addVideoToGallery = () => {
+    const url = prompt('Ingresa el enlace del video (YouTube, Vimeo o archivo directo):');
+    if (!url) return;
+
+    setGalleryImages([...galleryImages, {
+      id: Date.now().toString(),
+      profile_id: profileId || '',
+      image_url: url,
+      position: galleryImages.length,
+      type: 'video',
+      created_at: new Date().toISOString()
+    }]);
   };
 
   const replaceFileInputRef = useRef<HTMLInputElement>(null);
@@ -662,6 +680,12 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
   const updateGalleryImageLink = (id: string, link: string) => {
     setGalleryImages(galleryImages.map(image =>
       image.id === id ? { ...image, link } : image
+    ));
+  };
+
+  const updateGalleryImageUrl = (id: string, url: string) => {
+    setGalleryImages(galleryImages.map(image =>
+      image.id === id ? { ...image, image_url: url } : image
     ));
   };
 
@@ -1344,6 +1368,13 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                   <Plus size={18} />
                   Agregar Imagen
                 </label>
+                <button
+                  onClick={addVideoToGallery}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2"
+                >
+                  <Video size={18} />
+                  Agregar Video
+                </button>
                 <input
                   id="gallery-image-upload"
                   type="file"
@@ -1366,25 +1397,35 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                   <div key={image.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex gap-4">
                       <div className="relative group flex-shrink-0">
-                        <img
-                          src={image.image_url}
-                          alt="Galería"
-                          className="w-24 h-24 object-cover rounded-lg"
-                        />
+                        {image.type === 'video' ? (
+                          <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                            <Video size={32} className="text-gray-400" />
+                          </div>
+                        ) : (
+                          <img
+                            src={image.image_url}
+                            alt="Galería"
+                            className="w-24 h-24 object-cover rounded-lg"
+                          />
+                        )}
+
                         <button
                           onClick={() => removeGalleryImage(image.id)}
                           className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full shadow-sm hover:scale-110 transition"
-                          title="Eliminar imagen"
+                          title="Eliminar"
                         >
                           <X size={14} />
                         </button>
-                        <button
-                          onClick={() => handleReplaceClick(image.id)}
-                          className="absolute bottom-1 right-1 p-1 bg-white text-purple-600 rounded-full shadow-sm hover:scale-110 transition border border-gray-200"
-                          title="Cambiar imagen"
-                        >
-                          <Camera size={14} />
-                        </button>
+
+                        {image.type !== 'video' && (
+                          <button
+                            onClick={() => handleReplaceClick(image.id)}
+                            className="absolute bottom-1 right-1 p-1 bg-white text-purple-600 rounded-full shadow-sm hover:scale-110 transition border border-gray-200"
+                            title="Cambiar imagen"
+                          >
+                            <Camera size={14} />
+                          </button>
+                        )}
                       </div>
 
 
@@ -1420,6 +1461,20 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
                             className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
                           />
                         </div>
+                        {image.type === 'video' && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              URL del Video
+                            </label>
+                            <input
+                              type="url"
+                              value={image.image_url || ''}
+                              onChange={(e) => updateGalleryImageUrl(image.id, e.target.value)}
+                              placeholder="https://youtube.com/..."
+                              className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                            />
+                          </div>
+                        )}
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             Link (opcional)

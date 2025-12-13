@@ -22,6 +22,7 @@ const ICON_MAP: { [key: string]: any } = {
 import { supabase, TABLES } from '../lib/supabase';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { getProfileByUsername, trackProfileView, trackLinkClick, trackSocialClick } from '../lib/supabase-functions';
+import { getVideoEmbedUrl } from '../lib/video';
 
 interface PublicProfileProps {
   username: string;
@@ -45,6 +46,7 @@ interface GalleryImage {
   image_url: string;
   position: number;
   description?: string;
+  type?: 'image' | 'video';
   created_at: string;
 }
 
@@ -384,12 +386,34 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {profile.galleryImages.map((image) => (
                       <div key={image.id} className="relative group">
-                        <img
-                          src={image.image_url}
-                          alt={image.description || 'Imagen de galería'}
-                          className="w-full h-32 object-cover rounded-lg shadow-md"
-                          loading="lazy"
-                        />
+                        {image.type === 'video' ? (
+                          <div className="w-full h-48 sm:h-32 rounded-lg overflow-hidden shadow-md">
+                            {getVideoEmbedUrl(image.image_url) ? (
+                              <iframe
+                                src={getVideoEmbedUrl(image.image_url)!}
+                                className="w-full h-full"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+                                Video no disponible
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <img
+                            src={image.image_url}
+                            alt={image.description || 'Imagen de galería'}
+                            className="w-full h-32 object-cover rounded-lg shadow-md"
+                            loading="lazy"
+                          />
+                        )}
+                        {image.description && (image.type === 'image' || !image.description.includes('http')) && (
+                          <div className="mt-1 text-xs text-center px-1" style={{ color: profile.text_color || '#666666' }}>
+                            {image.description}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

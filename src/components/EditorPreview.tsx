@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { getVideoEmbedUrl } from '../lib/video';
 import {
     Instagram,
     Twitter,
@@ -55,6 +56,7 @@ interface GalleryImage {
     position: number;
     description?: string;
     link?: string;
+    type?: 'image' | 'video';
 }
 
 interface Theme {
@@ -195,7 +197,22 @@ const EditorPreviewString = ({
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                     {galleryImages.map((image) => (
                                         <div key={image.id} className="space-y-2">
-                                            {image.link ? (
+                                            {image.type === 'video' ? (
+                                                <div className="w-full h-32 rounded-lg overflow-hidden shadow-sm">
+                                                    {getVideoEmbedUrl(image.image_url) ? (
+                                                        <iframe
+                                                            src={getVideoEmbedUrl(image.image_url)!}
+                                                            className="w-full h-full"
+                                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                            allowFullScreen
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
+                                                            Video no disponible
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : image.link ? (
                                                 <a
                                                     href={image.link}
                                                     target="_blank"
