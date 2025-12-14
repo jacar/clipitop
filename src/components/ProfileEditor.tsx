@@ -151,6 +151,42 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
   /* New state for Share Modal */
   const [showShareModal, setShowShareModal] = useState(false);
 
+  // Auto-save draft effect
+  useEffect(() => {
+    if (loading || !user) return;
+
+    const draft = {
+      username,
+      displayName,
+      bio,
+      profileImage,
+      backgroundImageUrl,
+      theme,
+      backgroundSize,
+      backgroundRepeat,
+      globalButtonColor,
+      textColor,
+      linkColor,
+      whatsappActive,
+      whatsappNumber,
+      whatsappMessage,
+      whatsappPosition,
+      whatsappColor,
+      links,
+      galleryImages,
+      timestamp: Date.now()
+    };
+
+    localStorage.setItem(`biolink_draft_${user.id}`, JSON.stringify(draft));
+  }, [
+    user, loading,
+    username, displayName, bio, profileImage, backgroundImageUrl,
+    theme, backgroundSize, backgroundRepeat, globalButtonColor,
+    textColor, linkColor,
+    whatsappActive, whatsappNumber, whatsappMessage, whatsappPosition, whatsappColor,
+    links, galleryImages
+  ]);
+
 
 
 
@@ -352,45 +388,48 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
         if (galleryData) {
           setGalleryImages(galleryData);
         }
-      } else {
-        // Check for local draft first
-        const savedDraft = localStorage.getItem(`biolink_draft_${user.id}`);
-        if (savedDraft) {
-          try {
-            const draft = JSON.parse(savedDraft);
-            // Optional: Check if draft is "recent" or ask user? For now just load it to prevent data loss.
-            setUsername(draft.username || '');
-            setDisplayName(draft.displayName || '');
-            setBio(draft.bio || '');
-            setProfileImage(draft.profileImage || profileImage);
-            setBackgroundImageUrl(draft.backgroundImageUrl || null);
-            setTheme(draft.theme || 'purple');
-            setBackgroundSize(draft.backgroundSize || 'cover');
-            setBackgroundRepeat(draft.backgroundRepeat || 'no-repeat');
-            setTextColor(draft.textColor || '#FFFFFF');
-            setLinkColor(draft.linkColor || '#FFFFFF');
-            setWhatsappActive(draft.whatsappActive || false);
-            setWhatsappNumber(draft.whatsappNumber || '');
-            setWhatsappMessage(draft.whatsappMessage || '');
-            setWhatsappPosition(draft.whatsappPosition || 'right');
-            setWhatsappColor(draft.whatsappColor || '#25D366');
-            setLinks(draft.links || []);
-            setGalleryImages(draft.galleryImages || []);
-          } catch (e) {
-            console.error('Error loading draft', e);
-            // Fallback to default
-            const defaultUsername = user.email?.split('@')[0] || 'usuario';
-            setUsername(defaultUsername);
-            setDisplayName('Mi Nombre');
-            setBio('Creador de contenido');
-          }
-        } else {
-          // Perfil nuevo - usar email como username por defecto
-          const defaultUsername = user.email?.split('@')[0] || 'usuario';
-          setUsername(defaultUsername);
-          setDisplayName('Mi Nombre');
-          setBio('Creador de contenido');
+        if (galleryData) {
+          setGalleryImages(galleryData);
         }
+      }
+
+      // Check for local draft (Always check, and overwrite DB data if draft exists to recover unsaved changes)
+      const savedDraft = localStorage.getItem(`biolink_draft_${user.id}`);
+      if (savedDraft) {
+        try {
+          const draft = JSON.parse(savedDraft);
+
+          if (draft.username) setUsername(draft.username);
+          if (draft.displayName) setDisplayName(draft.displayName);
+          if (draft.bio !== undefined) setBio(draft.bio);
+          if (draft.profileImage) setProfileImage(draft.profileImage);
+          if (draft.backgroundImageUrl !== undefined) setBackgroundImageUrl(draft.backgroundImageUrl);
+          if (draft.theme) setTheme(draft.theme);
+          if (draft.backgroundSize) setBackgroundSize(draft.backgroundSize);
+          if (draft.backgroundRepeat) setBackgroundRepeat(draft.backgroundRepeat);
+          if (draft.globalButtonColor) setGlobalButtonColor(draft.globalButtonColor);
+          if (draft.textColor) setTextColor(draft.textColor);
+          if (draft.linkColor) setLinkColor(draft.linkColor);
+
+          if (draft.whatsappActive !== undefined) setWhatsappActive(draft.whatsappActive);
+          if (draft.whatsappNumber !== undefined) setWhatsappNumber(draft.whatsappNumber);
+          if (draft.whatsappMessage !== undefined) setWhatsappMessage(draft.whatsappMessage);
+          if (draft.whatsappPosition) setWhatsappPosition(draft.whatsappPosition);
+          if (draft.whatsappColor) setWhatsappColor(draft.whatsappColor);
+
+          if (draft.links) setLinks(draft.links);
+          if (draft.galleryImages) setGalleryImages(draft.galleryImages);
+
+          console.log('Restored unsaved draft layout');
+        } catch (e) {
+          console.error('Error loading draft', e);
+        }
+      } else if (!profile) {
+        // Only set defaults if NO profile and NO draft
+        const defaultUsername = user.email?.split('@')[0] || 'usuario';
+        setUsername(defaultUsername);
+        setDisplayName('Mi Nombre');
+        setBio('Creador de contenido');
       }
     } catch (error) {
       console.error('Error cargando perfil:', error);
@@ -516,6 +555,9 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
       }
 
 
+
+      // Clear draft on successful save
+      localStorage.removeItem(`biolink_draft_${user.id}`);
 
       // Open Share Modal on success instead of alert
       setShowShareModal(true);
