@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Instagram, Twitter, Youtube, Facebook, Linkedin, ExternalLink, ArrowLeft, Globe, Mail, MessageCircle, Phone, Music, MapPin, Smile, Store, Heart, Palette, X } from 'lucide-react';
+import { QRCodeCanvas } from 'qrcode.react';
 import {
   FaInstagram,
   BsTwitterX,
@@ -465,6 +466,21 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
           </div>
         )
       }
+      {/* QR Code flotante para visitantes de Escritorio */}
+      <div className="hidden lg:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-50 animate-fade-in pointer-events-none">
+        <div className="pointer-events-auto bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/20 transition-transform hover:scale-105 duration-300 group">
+          <div className="mb-2 text-center">
+            <p className="text-[10px] font-bold text-gray-800 uppercase tracking-wider">Ver en Móvil</p>
+          </div>
+          <div className="bg-white p-2 rounded-xl">
+            <QRCodeCanvas
+              value={`https://clipli.top/${profile?.username || ''}`}
+              size={100}
+              level="M"
+            />
+          </div>
+        </div>
+      </div>
     </div >
   );
 }
