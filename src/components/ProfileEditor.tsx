@@ -783,7 +783,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
       className="min-h-screen bg-gray-50 transition-colors duration-500"
       style={{
         background: currentTheme.type === 'gradient' ? currentTheme.value : undefined,
-        backgroundImage: currentTheme.type === 'image' || currentTheme.type === 'texture' ? `url(${currentTheme.value})` : undefined, // Fix for texture/image if needed, or stick to previous logic
+        backgroundImage: currentTheme.type === 'image' ? `url(${currentTheme.value})` : (currentTheme.type === 'texture' ? currentTheme.value : undefined),
         // Use the same logic as ProfilePreview for background consistency
         ...((currentTheme.type === 'image' || currentTheme.type === 'texture') ? {
           backgroundImage: currentTheme.type === 'texture' ? currentTheme.value : undefined, // Texture is usually a css gradient
@@ -1676,7 +1676,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
       </div>
 
       {/* Floating QR Code for Desktop */}
-      <div className="hidden lg:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-40 bg-white/90 backdrop-blur p-4 rounded-xl shadow-2xl border border-white/20 transition-all hover:scale-105">
+      <div className="hidden lg:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-[100] bg-white/90 backdrop-blur p-4 rounded-xl shadow-2xl border border-white/20 transition-all hover:scale-105">
         <span className="text-xs font-semibold text-gray-700 tracking-wide">Ver en móvil</span>
         <div className="bg-white p-2 rounded-lg shadow-inner">
           <QRCodeCanvas

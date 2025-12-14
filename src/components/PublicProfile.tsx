@@ -205,7 +205,27 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
   }, {});
 
   return (
-    <div className="min-h-screen py-8 px-4 flex flex-col items-center bg-gray-50">
+    <div
+      className={`min-h-screen py-8 px-4 flex flex-col items-center transition-colors duration-500 ${!profile.background_image_url && currentTheme.type === 'gradient' ? `bg-gradient-to-br ${currentTheme.value}` : 'bg-gray-50'}`}
+      style={{
+        backgroundImage: profile.background_image_url
+          ? `url(${profile.background_image_url})`
+          : currentTheme.type !== 'gradient'
+            ? currentTheme.value
+            : undefined,
+        backgroundSize: profile.background_image_url
+          ? typeof profile.theme !== 'string' && profile.theme.backgroundSize
+            ? profile.theme.backgroundSize
+            : 'cover'
+          : currentTheme?.backgroundSize || 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: profile.background_image_url
+          ? typeof profile.theme !== 'string' && profile.theme.backgroundRepeat
+            ? profile.theme.backgroundRepeat
+            : 'no-repeat'
+          : currentTheme?.backgroundRepeat || 'no-repeat',
+      }}
+    >
       <div className="w-full max-w-2xl">
         {/* Header con botón de volver */}
         <div className="mb-6">
@@ -220,24 +240,8 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
 
         {/* Profile Card */}
         <div
-          className={`w-full rounded-3xl shadow-xl overflow-hidden relative min-h-[500px] ${!profile.background_image_url && currentTheme.type === 'gradient' ? `bg-gradient-to-br ${currentTheme.value}` : ''}`}
+          className="w-full rounded-3xl shadow-xl overflow-hidden relative min-h-[500px]"
           style={{
-            backgroundImage: profile.background_image_url
-              ? `url(${profile.background_image_url})`
-              : currentTheme.type !== 'gradient'
-                ? currentTheme.value
-                : undefined,
-            backgroundSize: profile.background_image_url
-              ? typeof profile.theme !== 'string' && profile.theme.backgroundSize
-                ? profile.theme.backgroundSize
-                : 'cover'
-              : currentTheme?.backgroundSize || 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: profile.background_image_url
-              ? typeof profile.theme !== 'string' && profile.theme.backgroundRepeat
-                ? profile.theme.backgroundRepeat
-                : 'no-repeat'
-              : currentTheme?.backgroundRepeat || 'no-repeat',
             backgroundColor: !profile.background_image_url && (!currentTheme || currentTheme.type !== 'gradient') ? '#ffffff' : undefined,
           }}
         >
@@ -467,7 +471,7 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
         )
       }
       {/* QR Code flotante para visitantes de Escritorio */}
-      <div className="hidden lg:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-50 animate-fade-in pointer-events-none">
+      <div className="hidden lg:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-[100] animate-fade-in pointer-events-none">
         <div className="pointer-events-auto bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/20 transition-transform hover:scale-105 duration-300 group">
           <div className="mb-2 text-center">
             <p className="text-[10px] font-bold text-gray-800 uppercase tracking-wider">Ver en Móvil</p>
