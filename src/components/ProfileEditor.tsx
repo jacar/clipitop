@@ -44,6 +44,13 @@ import {
   ChevronDown,
   Video,
 } from 'lucide-react';
+import {
+  FaInstagram,
+  BsTwitterX,
+  FaBehance,
+  PiTelegramLogoLight,
+  FaGithub
+} from './ui/brand-icons';
 import { Footer } from './Footer';
 import { EditorPreview } from './EditorPreview';
 
@@ -67,18 +74,20 @@ interface Link {
 }
 
 const ICON_OPTIONS = [
-  { key: 'instagram', label: 'Instagram', icon: Instagram },
-  { key: 'twitter', label: 'X / Twitter', icon: Twitter },
+  { key: 'instagram', label: 'Instagram', icon: FaInstagram },
+  { key: 'twitter', label: 'X / Twitter', icon: BsTwitterX },
   { key: 'facebook', label: 'Facebook', icon: Facebook },
   { key: 'youtube', label: 'YouTube', icon: Youtube },
   { key: 'linkedin', label: 'LinkedIn', icon: Linkedin },
+  { key: 'telegram', label: 'Telegram', icon: PiTelegramLogoLight },
+  { key: 'github', label: 'GitHub', icon: FaGithub },
   { key: 'globe', label: 'Web', icon: Globe },
   { key: 'mail', label: 'Mail', icon: Mail },
   { key: 'message-circle', label: 'WhatsApp', icon: MessageCircle },
   { key: 'phone', label: 'Teléfono', icon: Phone },
   { key: 'music', label: 'Música', icon: Music },
   { key: 'map-pin', label: 'Ubicación', icon: MapPin },
-  { key: 'behance', label: 'Behance', icon: Palette }, // Using Palette as proxy
+  { key: 'behance', label: 'Behance', icon: FaBehance },
   { key: 'store', label: 'Tienda', icon: Store },
   { key: 'heart', label: 'Favorito', icon: Heart },
   { key: 'smile', label: 'Smile', icon: Smile },
@@ -726,7 +735,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
     );
   }
 
-  return (
+
   return (
     <div
       className="min-h-screen bg-gray-50 transition-colors duration-500"
@@ -1622,12 +1631,10 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             )
           }
         </div>
-      </div >
-    </div>
-      </div >
+      </div>
 
-    {/* Floating QR Code for Desktop */ }
-    < div className = "hidden lg:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-40 bg-white/90 backdrop-blur p-4 rounded-xl shadow-2xl border border-white/20 transition-all hover:scale-105" >
+      {/* Floating QR Code for Desktop */}
+      <div className="hidden lg:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-40 bg-white/90 backdrop-blur p-4 rounded-xl shadow-2xl border border-white/20 transition-all hover:scale-105">
         <span className="text-xs font-semibold text-gray-700 tracking-wide">Ver en móvil</span>
         <div className="bg-white p-2 rounded-lg shadow-inner">
           <QRCodeCanvas
@@ -1636,9 +1643,9 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
             level="M"
           />
         </div>
-      </div >
+      </div>
 
-    <Footer />
-    </div >
+      <Footer />
+    </div>
   );
 }

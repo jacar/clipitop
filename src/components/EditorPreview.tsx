@@ -19,6 +19,13 @@ import {
     Heart,
     Palette
 } from 'lucide-react';
+import {
+    FaInstagram,
+    BsTwitterX,
+    FaBehance,
+    PiTelegramLogoLight,
+    FaGithub
+} from './ui/brand-icons';
 
 interface Link {
     id: string;
@@ -32,18 +39,20 @@ interface Link {
 }
 
 const ICON_MAP: { [key: string]: any } = {
-    'instagram': Instagram,
-    'twitter': Twitter,
+    'instagram': FaInstagram,
+    'twitter': BsTwitterX,
     'facebook': Facebook,
     'youtube': Youtube,
     'linkedin': Linkedin,
+    'telegram': PiTelegramLogoLight,
+    'github': FaGithub,
     'globe': Globe,
     'mail': Mail,
     'message-circle': MessageCircle,
     'phone': Phone,
     'music': Music,
     'map-pin': MapPin,
-    'behance': Palette,
+    'behance': FaBehance,
     'store': Store,
     'heart': Heart,
     'smile': Smile

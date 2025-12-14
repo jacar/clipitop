@@ -1,19 +1,28 @@
 import { useEffect, useState } from 'react';
 import { Instagram, Twitter, Youtube, Facebook, Linkedin, ExternalLink, ArrowLeft, Globe, Mail, MessageCircle, Phone, Music, MapPin, Smile, Store, Heart, Palette, X } from 'lucide-react';
+import {
+  FaInstagram,
+  BsTwitterX,
+  FaBehance,
+  PiTelegramLogoLight,
+  FaGithub
+} from './ui/brand-icons';
 
 const ICON_MAP: { [key: string]: any } = {
-  'instagram': Instagram,
-  'twitter': Twitter,
+  'instagram': FaInstagram,
+  'twitter': BsTwitterX,
   'facebook': Facebook,
   'youtube': Youtube,
   'linkedin': Linkedin,
+  'telegram': PiTelegramLogoLight,
+  'github': FaGithub,
   'globe': Globe,
   'mail': Mail,
   'message-circle': MessageCircle,
   'phone': Phone,
   'music': Music,
   'map-pin': MapPin,
-  'behance': Palette,
+  'behance': FaBehance,
   'store': Store,
   'heart': Heart,
   'smile': Smile
@@ -272,16 +281,15 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
                       onClick={() => handleSocialClick(socialsMap.instagram, 'instagram')}
                       className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition shadow-lg"
                     >
-                      <Instagram size={20} />
+                      <FaInstagram size={24} />
                     </button>
                   )}
                   {socialsMap.twitter && (
                     <button
                       onClick={() => handleSocialClick(socialsMap.twitter, 'twitter')}
-                      className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white hover:scale-110 transition shadow-lg"
+                      className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white hover:scale-110 transition shadow-lg"
                     >
-                      {/* X Icon SVG */}
-                      <svg viewBox="0 0 24 24" aria-hidden="true" className="w-5 h-5 fill-current"><g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></g></svg>
+                      <BsTwitterX size={20} />
                     </button>
                   )}
                   {socialsMap.youtube && (
