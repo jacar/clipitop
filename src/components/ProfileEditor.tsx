@@ -1676,7 +1676,7 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
       </div>
 
       {/* Floating QR Code for Desktop */}
-      <div className="hidden lg:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-[100] bg-white/90 backdrop-blur p-4 rounded-xl shadow-2xl border border-white/20 transition-all hover:scale-105">
+      <div className="hidden md:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-[10000] bg-white/90 backdrop-blur p-4 rounded-xl shadow-2xl border border-white/20 transition-all hover:scale-105">
         <span className="text-xs font-semibold text-gray-700 tracking-wide">Ver en móvil</span>
         <div className="bg-white p-2 rounded-lg shadow-inner">
           <QRCodeCanvas

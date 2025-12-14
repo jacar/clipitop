@@ -471,7 +471,7 @@ export function PublicProfile({ username, onBack, onNavigate }: PublicProfilePro
         )
       }
       {/* QR Code flotante para visitantes de Escritorio */}
-      <div className="hidden lg:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-[100] animate-fade-in pointer-events-none">
+      <div className="hidden md:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-[10000] pointer-events-none">
         <div className="pointer-events-auto bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/20 transition-transform hover:scale-105 duration-300 group">
           <div className="mb-2 text-center">
             <p className="text-[10px] font-bold text-gray-800 uppercase tracking-wider">Ver en Móvil</p>
