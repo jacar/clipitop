@@ -727,7 +727,21 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+  return (
+    <div
+      className="min-h-screen bg-gray-50 transition-colors duration-500"
+      style={{
+        background: currentTheme.type === 'gradient' ? currentTheme.value : undefined,
+        backgroundImage: currentTheme.type === 'image' || currentTheme.type === 'texture' ? `url(${currentTheme.value})` : undefined, // Fix for texture/image if needed, or stick to previous logic
+        // Use the same logic as ProfilePreview for background consistency
+        ...((currentTheme.type === 'image' || currentTheme.type === 'texture') ? {
+          backgroundImage: currentTheme.type === 'texture' ? currentTheme.value : undefined, // Texture is usually a css gradient
+          backgroundSize: currentTheme.backgroundSize || 'cover',
+          backgroundRepeat: currentTheme.backgroundRepeat || 'no-repeat',
+        } : {})
+      }}
+    >
+
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
@@ -1609,7 +1623,22 @@ export function ProfileEditor({ onClose, user, onLogout, selectedTemplate, onNav
           }
         </div>
       </div >
-      <Footer />
+    </div>
+      </div >
+
+    {/* Floating QR Code for Desktop */ }
+    < div className = "hidden lg:flex fixed bottom-8 right-8 flex-col items-center gap-2 z-40 bg-white/90 backdrop-blur p-4 rounded-xl shadow-2xl border border-white/20 transition-all hover:scale-105" >
+        <span className="text-xs font-semibold text-gray-700 tracking-wide">Ver en móvil</span>
+        <div className="bg-white p-2 rounded-lg shadow-inner">
+          <QRCodeCanvas
+            value={`https://clipli.top/${username}`}
+            size={100}
+            level="M"
+          />
+        </div>
+      </div >
+
+    <Footer />
     </div >
   );
 }
