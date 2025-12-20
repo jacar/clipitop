@@ -4,9 +4,9 @@
 
 # Clipli — Tu Link en Bio Inteligente, Rápido y Personalizable
 
-Crea tu **biolink profesional** en menos de **2 minutos**, sin conocimientos técnicos, y convierte tu bio en una **mini landing** con todo lo importante en un solo enlace. :contentReference[oaicite:0]{index=0}
+Crea tu **biolink profesional** en menos de **2 minutos** y convierte tu bio en una **mini landing** con todo lo importante en un solo enlace.
 
-🌐 **Live:** https://www.clipli.top/ :contentReference[oaicite:1]{index=1}
+🌐 **Live:** https://www.clipli.top/
 
 </div>
 
@@ -14,28 +14,30 @@ Crea tu **biolink profesional** en menos de **2 minutos**, sin conocimientos té
 
 ## 📌 ¿Qué es Clipli?
 
-**Clipli** es una plataforma para construir páginas tipo *link in bio* (biolinks) y **landing pages** simples y efectivas, ideales para tráfico desde Instagram/TikTok/WhatsApp. :contentReference[oaicite:2]{index=2}
+**Clipli** es una plataforma para crear páginas tipo **Link in Bio (biolinks)** y **mini landing pages** enfocadas en conversión, perfectas para tráfico desde Instagram, TikTok y WhatsApp.
+
+Con Clipli puedes centralizar en un solo enlace:
+- WhatsApp / contacto
+- Catálogo o productos
+- Portafolio / servicios
+- Links clave (reseñas, ubicaciones, redes, etc.)
 
 ---
 
 ## 🎯 ¿Qué problema resuelve?
 
-En redes sociales tienes un solo enlace… y normalmente necesitas muchos:
-- WhatsApp / contacto
-- Catálogo o productos
-- Portafolio / servicios
-- Reseñas / links clave
-
-**Clipli** lo organiza en un solo link, listo para compartir. :contentReference[oaicite:3]{index=3}
+En redes sociales normalmente tienes **un solo link**, pero necesitas mostrar muchas cosas a la vez.  
+Clipli organiza tus enlaces y tu oferta en un solo lugar para que la gente **haga clic** y **tome acción** más rápido.
 
 ---
 
 ## ✨ Características clave
 
-- ⚡ **Creación rápida**: biolink en menos de 2 minutos :contentReference[oaicite:4]{index=4}  
-- 🧠 **Sin complicaciones**: no necesitas conocimientos técnicos :contentReference[oaicite:5]{index=5}  
-- 🧩 **Todo en un solo lugar**: WhatsApp, catálogo, portafolio, reseñas y más :contentReference[oaicite:6]{index=6}  
-- 🖥️ **Biolinks + landing pages**: pensado para convertir visitas en acciones :contentReference[oaicite:7]{index=7}  
+- ⚡ **Creación rápida**: tu biolink listo en minutos
+- 🧠 **Sin complicaciones**: no necesitas conocimientos técnicos
+- 🧩 **Todo en un solo lugar**: links, botones y secciones clave
+- 📱 **Mobile-first**: diseñado para verse perfecto desde el celular
+- 🎯 **Enfoque en conversión**: estructura pensada para lograr clics y contactos
 
 ---
 
@@ -43,7 +45,7 @@ En redes sociales tienes un solo enlace… y normalmente necesitas muchos:
 
 - Emprendedores y negocios locales
 - Creadores de contenido e influencers
-- Profesionales que venden servicios (asesorías, diseño, legal, salud, etc.)
+- Profesionales que venden servicios (diseño, legal, salud, asesorías, etc.)
 - Tiendas que necesitan mostrar links y catálogo rápido
 
 ---
@@ -75,19 +77,27 @@ En redes sociales tienes un solo enlace… y normalmente necesitas muchos:
 
 ## 🧭 Cómo se usa (alto nivel)
 
-1. Creas tu biolink.
-2. Agregas tus enlaces principales (WhatsApp, catálogo, portafolio, reseñas).
-3. Publicas el link en tu bio.
-4. Listo: un solo enlace, todo ordenado. :contentReference[oaicite:8]{index=8}
+1. Creas tu biolink
+2. Agregas tus enlaces principales (WhatsApp, catálogo, portafolio, reseñas)
+3. Publicas el link en tu bio
+4. Listo: un solo enlace, todo ordenado
 
 ---
 
 ## 🗺️ Roadmap (opcional)
 
 - [ ] Más plantillas/estilos de biolink
-- [ ] Bloques extra (video, mapas, botón de reservas)
+- [ ] Nuevos bloques (video, mapas, botón de reservas)
 - [ ] Integraciones (pixel / tags / herramientas de marketing)
-- [ ] Mejoras de analítica y conversión (si aplica)
+- [ ] Mejoras en analítica y conversiones (si aplica)
+
+---
+
+## 📄 Licencia
+
+Define aquí tu licencia:
+- **Privada / All rights reserved** (si es producto cerrado)
+- **MIT** (si lo quieres open source)
 
 ---
 
@@ -95,6 +105,6 @@ En redes sociales tienes un solo enlace… y normalmente necesitas muchos:
 
 **Armando Ovalle Jácome**  
 Portafolio: https://www.jacomeovalle.com/  
-Proyecto: https://www.clipli.top/ :contentReference[oaicite:9]{index=9}
+Proyecto: https://www.clipli.top/
 
 ---
