@@ -1,0 +1,28 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    # Ejecutar todos los días a la medianoche (UTC)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Permite ejecución manual
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          # Hacemos una petición simple a la API REST de Supabase para mantener el proyecto activo.
+          status_code=$(curl -s -o /dev/null -w "%%{http_code}" \
+            -H "apikey: ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/biolink_links?select=*&limit=1")
+          
+          if [ "$status_code" -ge 200 ] && [ "$status_code" -lt 300 ]; then
+            echo "Ping exitoso. Código: $status_code"
+            exit 0
+          else
+            echo "Error al hacer ping. Código: $status_code"
+            echo "Asegúrate de configurar VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en los secrets de GitHub."
+            exit 1
+          fi
